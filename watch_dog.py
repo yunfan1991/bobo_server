@@ -17,8 +17,8 @@ import redis
 
 r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses=True)
 
-web_server_dir = '/Volumes/video'
-#web_server_dir = '/media_server'
+#web_server_dir = '/Volumes/video'
+web_server_dir = '/media_server'
 
 try:
     with open('api_server.txt', 'r') as f:
@@ -150,7 +150,7 @@ class bobo_server_main():
 
 class FileEventHandler(FileSystemEventHandler):
 
-    def update(self, walk_sub_dir):
+    def update(self, walk_sub_dir, action='scan'):
         bobo_server = bobo_server_main()
         # /Volumes/video/special/学厨艺
         #/Volumes/video/movie
@@ -163,7 +163,15 @@ class FileEventHandler(FileSystemEventHandler):
         for item in data_new:
             r.delete(item)
         # bobo_server.scan(web_server_dir)
-        bobo_server.walk_sub_dir(walk_sub_dir)
+        if action == 'scan':
+            bobo_server.walk_sub_dir(walk_sub_dir)
+
+    def on_moved(self, event):
+        if os.path.isdir(event.src_path):
+            # 删除被删除的文件的keys
+            #print('删除被删除的文件的目录', event.src_path )
+            self.update(event.src_path, 'del')
+
         '''
     def on_any_event(self, event):
         print('on_any_event', event.src_path)
@@ -196,6 +204,7 @@ class FileEventHandler(FileSystemEventHandler):
                     temp_dir = event.src_path
                     time.sleep(1)
                     if temp_dir:
+                        print('目录改动', temp_dir)
                         self.update(temp_dir)
 
 
