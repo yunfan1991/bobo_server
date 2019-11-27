@@ -13,11 +13,6 @@
                             <div class="content">
                                 <form class="form-control" action="/login" method="post">
                                     <div class="field">
-                                        {% for message in get_flashed_messages(with_categories=True) %}
-                                            <span class="has-text-danger">
-                                                 {{ message[1] }}
-                                            </span>
-                                        {% endfor %}
                                         <label class="label">PIN CODE</label>
                                         <div class="control">
                                             <input autocomplete="on" name="pin_code" class="input" type="text">

@@ -40,6 +40,7 @@ app.config['EXPIRES'] = 315360000
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+
 @app.template_filter('url_encode')
 def urlencode_filter(s):
     movie_address = s
@@ -50,6 +51,40 @@ def urlencode_filter(s):
     movie_address = movie_address.replace('/\\', '/')
     encode_data = quote(movie_address)
     return encode_data
+
+
+@app.template_filter('next_episode')
+def next_episode(s):
+    # http://127.0.0.1:8566//study/郦波：语文启蒙七年级上/004第四课.《观沧海》：文如其人、诗如其人的曹操【微信公众号：学富资源吧】【添加微信：xfzyb668】.mp3
+    data = ''
+    try:
+        temp_s = s.split('8567')
+        # print('next address1:',temp_s)
+        movie_address = temp_s[-1]
+
+        movie_address = movie_address.replace('//', '/')
+
+        movie_address = movie_address.split('/')
+        file_name = movie_address[-1]
+        # print('next address movie_address:', movie_address)
+        dir_name = ":".join(movie_address[0:-1])
+        # print('next address dir name',dir_name)
+        files_new = r.get('media_server' + dir_name + ':files')
+        files = json.loads(files_new)
+        files = sorted(files, key=lambda x: (x[1]))
+        i = 0
+        for item in files:
+            i = i + 1
+            if file_name == item[1]:
+                data = files[i][1]
+                data = session['web_server'] + 'play?movie_address=' + dir_name.replace(':', '/') + '/' + data + '$_$' + files[i][2] + '$_$' + session['host_ip']
+                #data = quote(data)
+                #print('next address', data)
+                break
+    except:
+        pass
+    return data
+
 
 @app.template_filter('pure_name')
 def pure_name(s):
@@ -94,8 +129,6 @@ def ip_port(host_ip):
     return [ip, port]
 
 
-
-
 from functools import wraps
 from flask import g, request, redirect, url_for
 
@@ -137,7 +170,6 @@ def index():
 
 @app.route('/login', methods=['get', 'post'])
 def login():
-
     data = {}
     study = False
     session['user'] = False
@@ -159,6 +191,7 @@ def login():
         if pd:
             # print('getting user')
             session['host_ip'] = r.get('media_server')
+            session['web_server'] = r.get('server_address')
 
             check_box = data['check_box']
             if str(check_box) == 'on':
@@ -259,13 +292,14 @@ def login_by_scan():
         if pd:
             # print('getting user')
             session['host_ip'] = r.get('media_server')
+            session['web_server'] = r.get('server_address')
             cookie_value = create_cookie(data['pin_code'])
             response = make_response(redirect(url_for('index')))
             response.set_cookie(app.config['COOKIE_NAME'], cookie_value)
             # print(str(cookie_value))
             return response
         else:
-            flash('认证失败')
+            flash('认证失败', 'warning')
             return redirect('/login')
 
 
@@ -437,12 +471,162 @@ def m_dir():
     return render_template('movies_dir_list.html', **template_data)
 
 
-@app.route('/play', methods=['get'])
+@app.route('/search/')
+@login_required
+def search():
+    movies = None
+    server = None
+    is_dir = False
+    page = 1
+    offset = 0
+    page, per_page, offset = get_page_args()
+    per_page = 40
+    dir_name = request.args.get('q')
+    # return jsonify(test)
+    # for dir_name in dir_list:
+    print('dir_name', dir_name)
+    Files = []
+    # media_server:study:万门中学初中全套:化学:初中化学:dirs
+    if session['user'] == 'study':
+        data_new = r.keys(pattern='media_server:study:*' + dir_name + '*:dirs')
+        is_dir = True
+        files_new = r.keys(pattern='media_server:study:*' + dir_name + '*:files')
+    else:
+        data_new = r.keys(pattern='media_server:*' + dir_name + '*:dirs')
+        is_dir = True
+        files_new = r.keys(pattern='media_server:*' + dir_name + '*:files')
+        # print('本目录下有文件：', files_new)
+    for d in files_new[::-1]:
+        if 'secret-' not in d:
+            for item in json.loads(r.get(d)):
+                # #print(item)
+                Files.append(item)
+    Files = sorted(Files, key=lambda x: (x[1]))
+    # print('files',Files)
+
+    # data_new = r.keys(pattern='media_server:' + '*' + dir_name + ':dirs')
+
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+    List = []
+    for d in data_new[::-1]:
+        if 'secret-' not in d:
+            for item in json.loads(r.get(d)):
+                # #print(item)
+                List.append(item)
+    List = sorted(List, key=lambda x: (x[-1]), reverse=True)
+    # print(List)
+    # List.sort(lambda x, y: cmp(x[3], y[3]), reverse=True)
+    i = (page - 1) * per_page
+    List1 = List[i:i + 40]
+    pagination = Pagination(page=page, per_page=per_page, total=len(List), record_name='List')
+    template_data = {
+        'title': 'BOBO Media Server',
+        'is_active_logistics': 'color: deeppink',
+        'movies': List1,
+        'pagination': pagination,
+        'pagenation_replace': pagenation_replace,
+        'cate': dir_name,
+        'is_dir': is_dir,
+        'files': Files
+
+    }
+    # return str(form.carrier_intro.)
+    # return jsonify(List)
+    # return render_template('index.html', **template_data)
+    session['host_ip'] = r.get('media_server')
+
+    return render_template('movies_dir_list.html', **template_data)
+
+
+@app.route('/favorite/add/', methods=['get'])
+# @login_required
+def favorite_add():
+    item = request.args.get('item')
+    print('收藏的args', request.args.to_dict())
+    print('收藏的item', item.split(','))
+    if json.dumps(item) not in r.lrange(session['user'] + ':favorite', 0, -1):
+        r.rpush(session['user'] + ':favorite', json.dumps(item))
+        flash('收藏成功!')
+    else:
+        flash('之前已经收藏了!')
+    return redirect_back(request.referrer)
+
+
+@app.route('/favorite/del/', methods=['get'])
+# @login_required
+def favorite_del():
+    item = request.args.get('item')
+    r.lrem(session['user'] + ':favorite', 0, json.dumps(item))
+    if json.dumps(item) not in r.lrange(session['user'] + ':favorite', 0, -1):
+        flash('删除成功!')
+    return redirect_back(request.referrer)
+
+
+@app.route('/favorite')
+@login_required
+def favorite():
+    movies = None
+    server = None
+    is_dir = False
+    page = 1
+    offset = 0
+    page, per_page, offset = get_page_args()
+    per_page = 40
+
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+    dir_name = ''
+    Files = ''
+    temp_list = r.lrange(session['user'] + ':favorite', 0, -1)
+    List = []
+    for item in temp_list:
+        List.append(json.loads(item).split(','))
+    # List = sorted(List, key=lambda x: (x[-1]), reverse=True)
+    print('List', List)
+    List.reverse()
+    # List.sort(lambda x, y: cmp(x[3], y[3]), reverse=True)
+    i = (page - 1) * per_page
+    List1 = List[i:i + 40]
+    pagination = Pagination(page=page, per_page=per_page, total=len(List), record_name='List')
+    template_data = {
+        'title': 'BOBO Media Server',
+        'is_active_logistics': 'color: deeppink',
+        'movies': List1,
+        'pagination': pagination,
+        'pagenation_replace': pagenation_replace,
+        'cate': dir_name,
+        'is_dir': is_dir,
+        'files': Files,
+        'is_favorite': True
+
+    }
+    # return str(form.carrier_intro.)
+    # return jsonify(List)
+    # return render_template('index.html', **template_data)
+    session['host_ip'] = r.get('media_server')
+
+    return render_template('movies_dir_list.html', **template_data)
+
+
+@app.route('/play', methods=['get', 'post'])
 # @login_required
 def play():
     # print(request.args)
     movie_address = request.args['movie_address']
-    server = request.args['server']
+    if '$_$' in movie_address:
+        #movie_address=/tv/大明王朝1566/大明王朝1566-11.mp4$_$uid=4380a1441a5dee5b299729e3bdc0b617$_$server=http://192.168.203.25:8567/
+        temp_list = movie_address.split('$_$')
+        movie_address = temp_list[0]
+        server = temp_list[-1]
+        uid = temp_list[1]
+    else:
+        server = request.args['server']
+        uid = request.args['uid']
     movie_address = url_replace_1(movie_address)
 
     # movie_address = movie_address.encode('utf-8')
@@ -451,7 +635,7 @@ def play():
     if 'http://' not in server:
         server = 'http://' + request.args['server']
     movie_address = server + movie_address
-    uid = request.args['uid']
+
     # movie_address = url_replace_2(movie_address)
     # movie_address = movie_address.replace('//', '/')
     # movie_address = movie_address.replace(r'\/', '/')

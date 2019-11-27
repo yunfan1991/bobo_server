@@ -11,12 +11,7 @@
             <div class="tile is-parent">
                 <article class="tile is-child notification is-$light">
                     <div class="content">
-                        <div class="field">
-                            {% for message in get_flashed_messages(with_categories=True) %}
-                                <span class="has-text-danger">
-            {{ message[1] }}
-        </span>{% endfor %}
-                        </div>
+
                         <div class="box">
                             <div class="content">
                                 <form class="form-control" action="/login/init" method="post">

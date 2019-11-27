@@ -17,21 +17,7 @@
         <div id="navMenuDocumentation" class="navbar-menu">
             <div class="navbar-start">
                 {% if session['user'] == 'normal' %}
-                    <div class="navbar-item">
 
-                        <form id='search' class="field has-addons" method="get" action="/search/?q=">
-
-                            <div class="control has-icons-left"><span class="icon  is-left"><i
-                                    class="fa fa-search"></i></span><input name="q" id="materialSearch" class="input"
-                            >
-                            </div>
-                            <div class="control">
-                                <button class="button is-success" type="submit">搜索</button>
-
-                            </div>
-                        </form>
-
-                    </div>
 
                     <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=movie">
 
@@ -63,14 +49,38 @@
                     <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=study">
 
                         学习 </a>
+
+
+
+
                 {% endif %}
 
+
+            </div>
+
+            <div class="navbar-item">
+
+                <form id='search' class="field has-addons" method="get" action="/search/?q=">
+
+                    <div class="control has-icons-left"><span class="icon  is-left"><i
+                            class="fa fa-search"></i></span><input name="q" id="materialSearch" class="input"
+                    >
+                    </div>
+                    <div class="control">
+                        <button class="button is-success" type="submit">搜索</button>
+
+                    </div>
+                </form>
 
             </div>
 
             <div class="navbar-end">
 
                 {% if session['user'] %}
+
+                    <div class="navbar-item is-mobile has-background-primary">
+                        <a class="has-text-white is-desktop" href="/favorite">收藏</a>
+                    </div>
 
                     <div class="navbar-item has-dropdown is-hoverable">
                         <a class="navbar-link" href="#">

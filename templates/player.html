@@ -90,9 +90,10 @@ var cookie = {
         if(!cookieTime || cookieTime == undefined) {
                 cookieTime = 0;
         };
+
     var address='{{ movie }}';
-    //var next_address = 'http://192.168.203.25:5000/play?movie_address=%2Ftv%2F曼达洛人第一季/曼达洛人.The.Mandalorian.S01E02.中英字幕.WEBrip.720P-人人影视.mp4&server=http://192.168.203.25:8566&uid=44491d11d5bd9cebcd938039525b4517'
-    next_address = '';
+{% set temp = movie|next_episode %}
+    var next_address = '{{ temp }}';
     var result = address.replace('&amp;', '&').replace('&#39;', "'");
     var dp = new DPlayer({
         element: document.getElementsByClassName('dplayer')[0],
@@ -128,9 +129,9 @@ dp.on('ended', function (){
 
         {% endif %}
 {% endif %}
-
-
-
+<hr class="is-light">
+    <script src='http://ads.wulibobo.com/ads/ad_player_{{ session['user'] }}.js' language='javascript'></script
+<hr class="is-light">
 {% endblock %}
 {% block scripts %}
     <script>

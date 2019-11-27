@@ -79,7 +79,7 @@ class bobo_server_main():
                 # 有子目录里，把子目录记到redis中
                 dirs = [f for f in dirs if not f[0] == '.']
                 files = [f for f in files if not f[0] == '.']
-                if files and '.DS_Store' not in files:
+                if files and '.DS_Store' not in files and '@eaDir' not in files:
                     # print('root', root.replace(walk_path + '/',''))
                     # print('key', root.replace(directory+'/','').replace('/',':')+':files')
                     temp_file_list = []
@@ -95,28 +95,6 @@ class bobo_server_main():
                             file_c_time = os.path.getmtime(root + '/' + temp_file)
                             file_t = [root.replace(directory, '') + '/', temp_file, uid, file_size, int(file_c_time)]
                             temp_file_list.append(file_t)
-                            try:
-                                if ('movie' in root or 'cartoon' in root):
-                                    file_address = str(os.getcwd() + "/static/images/" + uid + '.jpg')
-                                    if not os.path.isfile(file_address):
-                                        # print('root', os.getcwd())
-
-                                        print(os.path.isfile(file_address), md5_name, file_address)
-                                        time.sleep(20)
-                                        # 处理 file_name
-                                        m_name = temp_file
-                                        try:
-                                            m_name_temp = get_parse(m_name)
-                                            m_name = m_name_temp['name_chinese'] + " " + m_name_temp[
-                                                'name_english'] + " " + str(m_name_temp['year'])
-                                        except:
-                                            pass
-                                        threading.Thread(target=download_picture_baidu,
-                                                         args=(m_name, 5, 1, uid)).start()
-
-                                    # download_picture_baidu()
-                            except:
-                                pass
                     r.set('media_server:' + root.replace(directory + '/', '').replace('/', ':') + ':files',
                           json.dumps(temp_file_list))
                     # print(temp_file_list)
@@ -230,6 +208,7 @@ class FileEventHandler(FileSystemEventHandler):
 
 if __name__ == "__main__":
     if not r.get('is_init'):
+        print('未初始化，开始全盘扫描')
         bobo_server = bobo_server_main()
         bobo_server.scan(web_server_dir)
         time.sleep(120)

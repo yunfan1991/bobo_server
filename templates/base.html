@@ -61,8 +61,22 @@
 <body>
 <div id="app">
     {% include 'nav_bar.html' %}
+    {% if get_flashed_messages(with_categories=True) %}
 
 
+
+
+        <section class="container has-text-centered">
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+                <div class="notification is-{{ category }}">
+                    <button class="delete"></button>
+                    {{ message }}
+                </div>
+
+                </section>
+
+            {% endfor %}
+    {% endif %}
 
     {% block main %}
     {% endblock %}
@@ -77,7 +91,16 @@
     </p>
 </footer>
 </div>
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+            $notification = $delete.parentNode;
+            $delete.addEventListener('click', () => {
+                $notification.parentNode.removeChild($notification);
+            });
+        });
+    });
+</script>
 {% block scripts %}
 {% endblock %}
 </body>
