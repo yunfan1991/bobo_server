@@ -17,8 +17,8 @@ import redis
 
 r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses=True)
 
-#web_server_dir = '/Volumes/video'
-web_server_dir = '/media_server'
+web_server_dir = '/Volumes/video'
+#web_server_dir = '/media_server'
 
 try:
     with open('api_server.txt', 'r') as f:
@@ -194,13 +194,6 @@ class FileEventHandler(FileSystemEventHandler):
             if os.path.isdir(event.src_path):
                 if str(event.src_path) != web_server_dir:
                     temp_dir = event.src_path
-                    try:
-                        t = event.src_path.replace(web_server_dir,'').split('/')
-                        if len(t) > 2:
-                            temp_dir = '/'.join(t[:-2])
-                    except:
-                        pass
-                    print("目录改动了,", temp_dir)
                     time.sleep(1)
                     if temp_dir:
                         self.update(temp_dir)
