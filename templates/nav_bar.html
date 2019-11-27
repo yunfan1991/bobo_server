@@ -1,0 +1,111 @@
+<nav id="navbar" class="navbar is-link has-shadow">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item  has-icon " href="/">
+                <strong class="has-text-success"><i class="fas fa-video is-large"></i></strong>&nbsp;&nbsp;<strong
+                    class="has-text-white">B_Media</strong>
+            </a>
+
+            <a role="button" class="navbar-burger is-primary" aria-label="menu" aria-expanded="false"
+               onclick="document.querySelector('.navbar-menu').classList.toggle('is-active'); document.querySelector('.navbar-burger').classList.toggle('is-active');">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navMenuDocumentation" class="navbar-menu">
+            <div class="navbar-start">
+                {% if session['user'] == 'normal' %}
+                    <div class="navbar-item">
+
+                        <form id='search' class="field has-addons" method="get" action="/search/?q=">
+
+                            <div class="control has-icons-left"><span class="icon  is-left"><i
+                                    class="fa fa-search"></i></span><input name="q" id="materialSearch" class="input"
+                            >
+                            </div>
+                            <div class="control">
+                                <button class="button is-success" type="submit">搜索</button>
+
+                            </div>
+                        </form>
+
+                    </div>
+
+                    <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=movie">
+
+                        电影 </a>
+
+                    <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=tv">
+
+                        剧集 </a>
+
+                    <a class="navbar-item bd-navbar-item-documentation " href="/m/?dir=cartoon">
+
+                        动画 </a>
+                    <a class="navbar-item bd-navbar-item-documentation " href="/m/?dir=show">
+
+                        综艺 </a>
+                    <a class="navbar-item bd-navbar-item-documentation  is-hidden-mobile" href="/m/?dir=mtv">
+                        MTV </a>
+                    <a class="navbar-item bd-navbar-item-documentation  is-hidden-mobile" href="/m/?dir=audio">
+                        音频 </a>
+                    <a class="navbar-item bd-navbar-item-documentation  is-hidden-mobile" href="/m/?dir=doc">
+
+                        纪录 </a>
+
+                    <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=special">
+
+                        专辑 </a>
+                {% endif %}
+                {% if session['user'] %}
+                    <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=study">
+
+                        学习 </a>
+                {% endif %}
+
+
+            </div>
+
+            <div class="navbar-end">
+
+                {% if session['user'] %}
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link" href="#">
+                            看过
+                        </a>
+
+                        <div class="navbar-dropdown is-boxed dropdown-menu" style="width: 20vw">
+
+                            <script>
+                                for (var i = localStorage.length - 1; i > localStorage.length - 20; i--) {
+                                    var key = localStorage.key(i);
+                                    var value = localStorage[key];
+                                    if (key == 'dplayer-danmaku-opacity' || key == 'dplayer-volume' || key == 'LocalDB') {
+                                        continue
+                                    }
+                                    ;
+                                    if (key != null) {
+                                        document.write('<p style="font-size:16px">&nbsp;&nbsp;<a href="/play?' + value + '">' + key + '</a></p>');
+                                    }
+                                }
+
+                            </script>
+                            <hr class="navbar-divider">
+                            &nbsp;&nbsp;<a href="javascript:localStorage.clear();" onClick="alert('清除成功')">清除记录</a>
+
+                        </div>
+                    </div>
+
+
+                    <div class="navbar-item is-mobile has-background-primary">
+                        <a class="has-text-white is-desktop" href="/logout">退出</a>
+                    </div>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

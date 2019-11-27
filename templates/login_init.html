@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block page_css %}
+
+{% endblock %}
+
+{% block main %}
+
+    <div class="container">
+
+        <div class="tile is-ancestor">
+            <div class="tile is-parent">
+                <article class="tile is-child notification is-$light">
+                    <div class="content">
+                        <div class="field">
+                            {% for message in get_flashed_messages(with_categories=True) %}
+                                <span class="has-text-danger">
+            {{ message[1] }}
+        </span>{% endfor %}
+                        </div>
+                        <div class="box">
+                            <div class="content">
+                                <form class="form-control" action="/login/init" method="post">
+
+                                    {% if not is_init %}
+                                    <div class="has-text-centered"><h4>欢迎您使用 BOBO MP4 媒体服务器</h4></div>
+                                    <div>初始设置：</div>
+                                    <div>
+                                        <label class="label">Language</label>
+
+                                        <div class="control">
+                                            <div class="select">
+
+                                                <select name="language">
+                                                    <option value="Chinese">中文</option>
+                                                    <option value="English">English</option>
+                                                    <option value="Russian">русский</option>
+                                                </select>
+
+                                        </div>
+
+
+                                    </div>
+                                    <label class="label">网页服务器</label>
+                                    <div class="control">
+                                        <input autocomplete="on" name="server_address" class="input" type="text"
+                                               value="{{ request.headers['Referer'].split('login')[0] }}">
+                                    </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">媒体服务器</label>
+                                <div class="control">
+                                    <input autocomplete="on" name="media_server" class="input" type="text"
+                                           value="{{request.headers['Referer'].split('login')[0].replace('8568','8567')}}">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">普通用户PIN码</label>
+                                <div class="control">
+                                    <input autocomplete="on" name="normal_pin" class="input" type="text"
+                                           value="9999">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">孩子用户PIN码</label>
+                                <div class="control">
+                                    <input autocomplete="on" name="study_pin" class="input" type="text"
+                                           value="1234">
+                                </div>
+                            </div>
+
+
+                            <div class="field">
+                                <label class="label">找回密码问题：你最喜欢的宠物的名字是？</label>
+                                <div class="control">
+                                    <input autocomplete="on" name="q_a" class="input" type="text"  value="Alpha">
+                                </div>
+                            </div>
+                                    {% else %}
+
+                                       <div class="field">
+                                <label class="label">找回密码问题：你最喜欢的宠物的名字是？</label>
+                                <div class="control">
+                                    <input autocomplete="on" name="q_a" class="input" type="text">
+                                </div>
+                            </div>
+
+
+                                    {% endif %}
+
+
+                            <div class="control is-centered">
+                                <button class="button is-primary">Submit</button>
+                            </div>
+                            </form>
+
+
+                        </div>
+
+
+                    </div>
+                    <div class="content">
+                        <!-- Content -->
+                    </div>
+            </div>
+            </article>
+        </div>
+    </div>
+
+    </div>
+
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}

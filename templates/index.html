@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import file_list with context %}
+{% block page_css %}
+
+{% endblock %}
+
+{% block main %}
+    <div class="container is-desktop is-mobile">
+        <div class="tile is-ancestor">
+            <div class="tile is-parent">
+                <article class="tile is-child notification is-$light is-mobile">
+                    {% if data %}
+                    {{ file_list(data) }}
+                    {% endif %}
+                        <div class="content">
+                            <!-- Content -->
+                        </div>
+                </article>
+            </div>
+        </div>
+    <div class="center">
+
+        {{ pagenation_replace(pagination.links)|safe }}
+
+    </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}

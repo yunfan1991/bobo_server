@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% block head %}
+        <title>{% block title %}{{ title }}{% endblock %}</title>
+        <meta name="theme-color" content="#ffffff">
+        <link rel="shortcut icon" href="/static/img/favicon.ico">
+        {% block page_css %}
+        {% endblock %}
+        {% block styles %}
+
+            <link rel="stylesheet" href="/static/node_modules/buefy/dist/buefy.min.css">
+            <link rel="stylesheet" href="/static/node_modules/fontawesome/css/all.min.css">
+            <style>
+                body {
+                    /*  字体  */
+                    font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
+                    /*  字号 */
+                    font-size: 20px;
+                    color: #333;
+                    /* 行距 */
+                    line-height: 1.75;
+                    background: #F5F5F5;
+                }</style>
+            <style>
+                a:link {
+                    text-decoration: none;
+                    color: blue
+                }
+
+                　　 a:active {
+                    text-decoration: blink
+                }
+
+                　　 a:hover {
+                    text-decoration: underline;
+                    color: red
+                }
+
+                　　 a:visited {
+                    text-decoration: none;
+                    color: green
+                }
+
+
+            </style>
+
+        {% endblock styles %}
+
+        <script src="/static/dist/vue.js"></script>
+        <!-- Full bundle -->
+        <script src="/static/node_modules/buefy/dist/buefy.min.js"></script>
+
+    {% endblock %}
+</head>
+
+
+<body>
+<div id="app">
+    {% include 'nav_bar.html' %}
+
+
+
+    {% block main %}
+    {% endblock %}
+
+</div>
+
+<footer class="is-hidden-mobile">
+    <hr class="is-light">
+
+    <p class="has-text-centered">
+        &copy;2019 wulibobo.com
+    </p>
+</footer>
+</div>
+
+{% block scripts %}
+{% endblock %}
+</body>
+</html>

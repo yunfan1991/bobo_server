@@ -1,0 +1,50 @@
+{% macro file_list(movies) %}
+    <div class="content">
+        <ul>
+            {% for movie in movies %}
+                <li class="is-link">
+                    <i class="has-text-grey fa fa-video"></i> <a class="has-text-link" href="/play?movie_address={{ movie[0]|trim|urlencode }}/{{ movie[1]|urlencode }}&server={{ session['host_ip'] }}&uid={{ movie[2] }}">{{ movie[1] }}</a>
+                    <span class="has-text-grey">{{ movie[3] }}G</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro dir_list(movies) %}
+    <div class="content">
+        <ul>
+            {% for movie in movies %}
+                <li class="is-link">
+                    <i class="has-text-grey fa fa-folder is-success" aria-hidden="true"></i> <a class="has-text-link" href="?dir={{request.url.split('dir=')[-1]}}$_${{ movie[0]|trim|urlencode }}">{{ movie[0] }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+
+
+{% macro img_list(movies) %}
+
+    <div class="columns is-multiline is-mobile">
+    {% for movie in movies %}
+        <div class="column is-4-mobile is-3-tablet is-3-desktop is-3-widescreen is-one-fifth-fullhd is-pulled-lef has-text-centered">
+            <figure class="is-3by4">
+            <a href="/play?movie_address={{ movie[0]|trim|urlencode }}/{{ movie[1]|urlencode }}&server={{ session['host_ip'] }}&uid={{ movie[2] }}"><img onerror="javascript:this.src='/static/nologo.png';this.onerror=null" style="width:180px;height:240px;overflow:hidden;"  src="/static/images/{{ movie[2] }}.jpg"/></a>
+            </figure>
+            <br>
+
+                    <a href="/play?movie_address={{ movie[0]|trim|urlencode }}/{{ movie[1]|urlencode }}&server={{ session['host_ip'] }}&uid={{ movie[2] }}">{{ movie[1]|pure_name|truncate(26) }}</a>
+                    <br>
+                    <span class="has-text-grey">{{ movie[-2] }}G</span>
+
+        </div>
+
+    {% endfor %}
+
+    </div>
+
+{% endmacro %}
+
+
