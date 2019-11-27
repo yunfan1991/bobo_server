@@ -552,7 +552,7 @@ def favorite_add():
         flash('收藏成功!')
     else:
         flash('之前已经收藏了!')
-    return redirect_back(request.referrer)
+    return redirect('/favorite')
 
 
 @app.route('/favorite/del/', methods=['get'])
@@ -562,7 +562,7 @@ def favorite_del():
     r.lrem(session['user'] + ':favorite', 0, json.dumps(item))
     if json.dumps(item) not in r.lrange(session['user'] + ':favorite', 0, -1):
         flash('删除成功!')
-    return redirect_back(request.referrer)
+    return redirect('/favorite')
 
 
 @app.route('/favorite')
