@@ -17,25 +17,30 @@
                                 <form class="form-control" action="/login/init" method="post">
 
                                     {% if not is_init %}
-                                    <div class="has-text-centered"><h4>欢迎您使用 BOBO MP4 媒体服务器</h4></div>
-                                    <div>初始设置：</div>
+                                    <div class="has-text-centered"><h4>{% trans %}You are welcome to use the BOBO MP4 media server{% endtrans%}</h4></div>
+                                    <div>{% trans %}Initial settings:{% endtrans%}</div>
                                     <div>
-                                        <label class="label">Language</label>
+                                        <label class="label">Language 语言</label>
 
                                         <div class="control">
                                             <div class="select">
 
                                                 <select name="language">
-                                                    <option value="Chinese">中文</option>
-                                                    <option value="English">English</option>
-                                                    <option value="Russian">русский</option>
+                                                   {% for key, language in AVAILABLE_LANGUAGES.items() %}
+                                                            {% if CURRENT_LANGUAGE == key %}
+                                                                <option value="{{ key }}"
+                                                                        selected>{{ language }}</option>
+                                                            {% else %}
+                                                                <option value="{{ key }}">{{ language }}</option>
+                                                            {% endif %}
+                                                        {% endfor %}
                                                 </select>
 
                                         </div>
 
 
                                     </div>
-                                    <label class="label">网页服务器</label>
+                                    <label class="label">{% trans %}Web server{% endtrans%}</label>
                                     <div class="control">
                                         <input autocomplete="on" name="server_address" class="input" type="text"
                                                value="{{ request.headers['Referer'].split('login')[0] }}">
@@ -43,7 +48,7 @@
                             </div>
 
                             <div class="field">
-                                <label class="label">媒体服务器</label>
+                                <label class="label">{% trans %}Media Serve{% endtrans%}</label>
                                 <div class="control">
                                     <input autocomplete="on" name="media_server" class="input" type="text"
                                            value="{{request.headers['Referer'].split('login')[0].replace('8568','8567')}}">
@@ -51,7 +56,7 @@
                             </div>
 
                             <div class="field">
-                                <label class="label">普通用户PIN码</label>
+                                <label class="label">{% trans %}Normal user PIN{% endtrans%}</label>
                                 <div class="control">
                                     <input autocomplete="on" name="normal_pin" class="input" type="text"
                                            value="9999">
@@ -59,7 +64,7 @@
                             </div>
 
                             <div class="field">
-                                <label class="label">孩子用户PIN码</label>
+                                <label class="label">{% trans %}Child user PIN{% endtrans%}</label>
                                 <div class="control">
                                     <input autocomplete="on" name="study_pin" class="input" type="text"
                                            value="1234">
@@ -68,7 +73,7 @@
 
 
                             <div class="field">
-                                <label class="label">找回密码问题：你最喜欢的宠物的名字是？</label>
+                                <label class="label">{% trans %}Get your password back question - What's your favorite pet's name?{% endtrans%}</label>
                                 <div class="control">
                                     <input autocomplete="on" name="q_a" class="input" type="text"  value="Alpha">
                                 </div>
@@ -76,7 +81,7 @@
                                     {% else %}
 
                                        <div class="field">
-                                <label class="label">找回密码问题：你最喜欢的宠物的名字是？</label>
+                                <label class="label">{% trans %}Get your password back question - What's your favorite pet's name?{% endtrans%}</label>
                                 <div class="control">
                                     <input autocomplete="on" name="q_a" class="input" type="text">
                                 </div>
@@ -87,7 +92,7 @@
 
 
                             <div class="control is-centered">
-                                <button class="button is-primary">Submit</button>
+                                <button class="button is-primary">{% trans %}Submit{% endtrans%}</button>
                             </div>
                             </form>
 

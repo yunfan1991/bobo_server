@@ -2,20 +2,20 @@
     <div class="container">
         <div class="navbar-brand">
             <a class="navbar-item  has-icon " href="/">
-                <strong class="has-text-success"><i class="fas fa-video is-large"></i></strong>&nbsp;&nbsp;<strong
-                    class="has-text-white">B_Media</strong>
+                <strong class="has-text-success"><i class="fas fa-video is-large"></i></strong>
             </a>
 <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=movie">
-
-                        电影 </a>
+ {% if session['user'] == 'normal' %}
+                        {% trans %}Movie{% endtrans%} </a>
 
                     <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=tv">
 
-                        剧集 </a>
+                        {% trans %}Episode{% endtrans%} </a>
 
                     <a class="navbar-item bd-navbar-item-documentation " href="/m/?dir=cartoon">
 
-                        动漫 </a>
+                        {% trans %}Animation{% endtrans%} </a>
+        {% endif %}
             <a role="button" class="navbar-burger is-primary" aria-label="menu" aria-expanded="false"
                onclick="document.querySelector('.navbar-menu').classList.toggle('is-active'); document.querySelector('.navbar-burger').classList.toggle('is-active');">
                 <span aria-hidden="true"></span>
@@ -28,30 +28,25 @@
             <div class="navbar-start">
                 {% if session['user'] == 'normal' %}
 
-
-
                     <a class="navbar-item bd-navbar-item-documentation " href="/m/?dir=show">
 
-                        综艺 </a>
+                        {% trans %}Show{% endtrans%} </a>
                     <a class="navbar-item bd-navbar-item-documentation  is-hidden-mobile" href="/m/?dir=mtv">
-                        MTV </a>
+                        {% trans %}MTV{% endtrans%} </a>
                     <a class="navbar-item bd-navbar-item-documentation  is-hidden-mobile" href="/m/?dir=audio">
-                        音频 </a>
+                        {% trans %}Audio{% endtrans%} </a>
                     <a class="navbar-item bd-navbar-item-documentation  is-hidden-mobile" href="/m/?dir=doc">
 
-                        纪录 </a>
+                        {% trans %}Doc{% endtrans%} </a>
 
                     <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=special">
 
-                        专题 </a>
+                        {% trans %}Special{% endtrans%} </a>
                 {% endif %}
                 {% if session['user'] %}
                     <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=study">
 
-                        学习 </a>
-
-
-
+                        {% trans %}Study{% endtrans%} </a>
 
                 {% endif %}
 
@@ -67,7 +62,7 @@
                     >
                     </div>
                     <div class="control">
-                        <button class="button is-success" type="submit">搜索</button>
+                        <button class="button is-success" type="submit">{% trans %}Search{% endtrans%}</button>
 
                     </div>
                 </form>
@@ -79,12 +74,12 @@
                 {% if session['user'] %}
 
                     <div class="navbar-item is-mobile has-background-primary">
-                        <a class="has-text-white is-desktop" href="/favorite">收藏</a>
+                        <a class="has-text-white is-desktop" href="/favorite">{% trans %}Collect{% endtrans%}</a>
                     </div>
 
                     <div class="navbar-item has-dropdown is-hoverable">
                         <a class="navbar-link" href="#">
-                            看过
+                            {% trans %}Seen{% endtrans%}
                         </a>
 
                         <div class="navbar-dropdown is-boxed dropdown-menu" style="width: 20vw">
@@ -104,14 +99,14 @@
 
                             </script>
                             <hr class="navbar-divider">
-                            &nbsp;&nbsp;<a href="javascript:localStorage.clear();" onClick="alert('清除成功')">清除记录</a>
+                            &nbsp;&nbsp;<a href="javascript:localStorage.clear();" onClick="alert('{% trans %}Cleared{% endtrans%}')">{% trans %}Clear{% endtrans%}</a>
 
                         </div>
                     </div>
 
 
                     <div class="navbar-item is-mobile has-background-primary">
-                        <a class="has-text-white is-desktop" href="/logout">退出</a>
+                        <a class="has-text-white is-desktop" href="/logout">{% trans %}Logout{% endtrans%}</a>
                     </div>
 
                 {% endif %}

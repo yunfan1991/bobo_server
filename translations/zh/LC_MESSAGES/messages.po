@@ -1,0 +1,160 @@
+# Translations template for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-11-28 21:01+0800\n"
+"PO-Revision-Date: 2019-11-28 22:54+0800\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+"X-Generator: Poedit 2.2.4\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh\n"
+
+#: app.py:184 app.py:205 app.py:234 app.py:285 app.py:301
+msgid "Authentication failed"
+msgstr "认证失败"
+
+#: app.py:232
+msgid "Certification successful, please reinitialize"
+msgstr "认证成功，请重新初始化"
+
+#: app.py:252
+msgid "Parameter setup was successful"
+msgstr "参数设置成功"
+
+#: app.py:551
+msgid "Success"
+msgstr "注册成功, 请登录"
+
+#: app.py:553
+msgid "It's been collected before!"
+msgstr "已收藏了！"
+
+#: app.py:563
+msgid "Deleted!"
+msgstr "已删除"
+
+#: templates/login.html:16
+msgid "Password"
+msgstr "PIN 码"
+
+#: templates/login.html:26
+msgid "Remember me."
+msgstr "记住我."
+
+#: templates/login.html:26
+msgid "Initial PIN code?"
+msgstr "初始化 PIN 码？"
+
+#: templates/login.html:32 templates/login_init.html:90
+msgid "Submit"
+msgstr "提交"
+
+#: templates/login_init.html:20
+msgid "You are welcome to use the BOBO MP4 media server"
+msgstr "欢迎您使用 BOBO MP4 媒体服务器"
+
+#: templates/login_init.html:21
+msgid "Initial settings:"
+msgstr "初始设置："
+
+#: templates/login_init.html:38
+msgid "Web server"
+msgstr "网络服务器"
+
+#: templates/login_init.html:46
+msgid "Media Serve"
+msgstr "媒体服务器"
+
+#: templates/login_init.html:54
+msgid "Normal user PIN"
+msgstr "普通用户 PIN码"
+
+#: templates/login_init.html:62
+msgid "Child user PIN"
+msgstr "孩子用户 PIN码"
+
+#: templates/login_init.html:71 templates/login_init.html:79
+msgid "Get your password back question - What's your favorite pet's name?"
+msgstr "找回密码问题 - 你最喜欢的宠物的名字是什么？"
+
+#: templates/nav_bar.html:10
+msgid "Movie"
+msgstr "电影"
+
+#: templates/nav_bar.html:14
+msgid "Episode"
+msgstr "剧集"
+
+#: templates/nav_bar.html:18
+msgid "Animation"
+msgstr "动画"
+
+#: templates/nav_bar.html:34
+msgid "Show"
+msgstr "综艺"
+
+#: templates/nav_bar.html:36
+msgid "MTV"
+msgstr "MTV"
+
+#: templates/nav_bar.html:38
+msgid "Audio"
+msgstr "音频"
+
+#: templates/nav_bar.html:41
+msgid "Doc"
+msgstr "纪录"
+
+#: templates/nav_bar.html:45
+msgid "Special"
+msgstr "专题"
+
+#: templates/nav_bar.html:50
+msgid "Study"
+msgstr "学习"
+
+#: templates/nav_bar.html:66
+msgid "Search"
+msgstr "搜索"
+
+#: templates/nav_bar.html:78
+msgid "Collect"
+msgstr "收藏"
+
+#: templates/nav_bar.html:83
+msgid "Seen"
+msgstr "看过"
+
+#: templates/nav_bar.html:103
+msgid "Cleared"
+msgstr "已清除"
+
+#: templates/nav_bar.html:103
+msgid "Clear"
+msgstr "清除"
+
+#: templates/nav_bar.html:110
+msgid "Logout"
+msgstr "退出"
+
+#: templates/player.html:17
+msgid ""
+"Sorry, it is not supported to play 'rmvb', 'avi', 'dat', 'rm' format files. "
+"Try to use the 'mp4' file."
+msgstr ""
+"很抱歉，不支持播放\"rmvb\"，\"avi\"，\"dat\"，\"rm\"格式文件。请尝试使用"
+"\"mp4\"文件。"
+
+#: templates/player.html:20
+msgid "Please download the file to play locally:"
+msgstr "请下载文件以在本地播放："

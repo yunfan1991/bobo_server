@@ -14,7 +14,7 @@ import datetime, urllib
 
 import json, uuid
 from flask_cors import CORS
-from operator import itemgetter
+from flask_babel import Babel, gettext as _
 
 from utils import get_parse, get_douban, pure_movie_name, get_api, get_host_ip, get_ip
 
@@ -31,14 +31,36 @@ r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = '_5#y2L"F4Q8z\n\xecasfe#@!%]/'
 app.config['_COOKIE_KEY'] = 'eafe(*)YDVV^Y#WFdafdawe-0='
 app.config['COOKIE_NAME'] = 'BOBO_cookie'
 app.config['EXPIRES'] = 315360000
-# app.config['IMG_SERVER'] = "http://106.13.14.178:8003/"
-# app.config['IMG_SERVER'] = "http://192.168.18.191:5000/"
+app.config['LANGUAGES'] = {
+    'en': 'English',
+    'zh': '中文',
+    'ru': 'русский'
+}
+babel = Babel(app)
 
-CORS(app, resources={r"/*": {"origins": "*"}})
+
+@babel.localeselector
+def get_locale():
+    try:
+        language = r.get('language')
+    except:
+        language = None
+    if language is not None:
+        return language
+    else:
+        return 'en'
+    # return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
+
+
+@app.context_processor
+def inject_conf_var():
+    return dict(AVAILABLE_LANGUAGES=app.config['LANGUAGES'],
+                CURRENT_LANGUAGE=r.get('language'))
 
 
 @app.template_filter('url_encode')
@@ -77,9 +99,10 @@ def next_episode(s):
             i = i + 1
             if file_name == item[1]:
                 data = files[i][1]
-                data = session['web_server'] + 'play?movie_address=' + dir_name.replace(':', '/') + '/' + data + '$_$' + files[i][2] + '$_$' + session['host_ip']
-                #data = quote(data)
-                #print('next address', data)
+                data = session['web_server'] + 'play?movie_address=' + dir_name.replace(':', '/') + '/' + data + '$_$' + \
+                       files[i][2] + '$_$' + session['host_ip']
+                # data = quote(data)
+                # print('next address', data)
                 break
     except:
         pass
@@ -161,8 +184,6 @@ def index():
         # return render_template('index.html', movies=movies, server=server)
 
     except Exception as e:
-        # 有错误，要么是cookie没有，要么是电影没有,第一次启动后台的时候，就要把电影更新上来。
-
         print(e)
         # return redirect(url_for('login'))
         return redirect('/login')
@@ -178,11 +199,18 @@ def login():
         # #print(data['pin_code'])
         # #print(settings_obj.normal_pin)
         try:
+            language = data['set_language']
+            if language:
+                r.set('language', language)
+                return redirect('/login/init')
+        except:
+            pass
+        try:
             pd = data['pin_code'] == r.get('normal_pin') or data['pin_code'] == r.get('study_pin')
             study = data['pin_code'] == r.get('study_pin')
             normal = data['pin_code'] == r.get('normal_pin')
         except:
-            flash('认证失败')
+            flash(_('Authentication failed'))
             return redirect('/login')
         if study:
             session['user'] = 'study'
@@ -203,8 +231,13 @@ def login():
                 return response
             redirect
         else:
-            flash('认证失败')
+            flash(_('Authentication failed'))
             return redirect('/login')
+    else:
+        # select Lang
+        if not r.get('language'):
+            return render_template('login.html', set_language=True)
+
     return render_template('login.html')
 
 
@@ -230,9 +263,9 @@ def login_init():
             # add_obj = Seetings.objects.first()
             if str(data) == r.get('q_a'):
                 r.set('is_init', '')
-                flash('认证成功，请重新初始化')
+                flash(_('Certification successful, please reinitialize'))
             else:
-                flash('认证失败，请再想想')
+                flash(_('Authentication failed'))
             return redirect('/login/init')
 
         else:
@@ -250,7 +283,7 @@ def login_init():
             with open('config/api_server.txt', 'w') as f:
                 f.write(data['server_address'])
             r.set('is_init', 'True')
-            flash('参数设置成功，请登录')
+            flash(_('Parameter setup was successful'))
             return redirect('/login')
 
     else:
@@ -283,7 +316,7 @@ def login_by_scan():
             study = data['pin_code'] == r.get('study_pin')
             normal = data['pin_code'] == r.get('normal_pin')
         except:
-            flash('认证失败')
+            flash(_('Authentication failed'))
             return redirect('/login')
         if study:
             session['user'] = 'study'
@@ -299,7 +332,7 @@ def login_by_scan():
             # print(str(cookie_value))
             return response
         else:
-            flash('认证失败', 'warning')
+            flash(_('Authentication failed'))
             return redirect('/login')
 
 
@@ -417,7 +450,6 @@ def m_dir():
     # for dir_name in dir_list:
     print('dir_name', dir_name)
     Files = []
-    # media_server:study:万门中学初中全套:化学:初中化学:dirs
     if dir_name == 'movie' or dir_name == 'cartoon':
         data_new = r.keys(pattern='media_server:' + dir_name + '*:files')
 
@@ -485,9 +517,9 @@ def search():
     dir_name = request.args.get('q')
     # return jsonify(test)
     # for dir_name in dir_list:
-    print('dir_name', dir_name)
+    # print('dir_name', dir_name)
     Files = []
-    # media_server:study:万门中学初中全套:化学:初中化学:dirs
+
     if session['user'] == 'study':
         data_new = r.keys(pattern='media_server:study:*' + dir_name + '*:dirs')
         is_dir = True
@@ -546,13 +578,13 @@ def search():
 # @login_required
 def favorite_add():
     item = request.args.get('item')
-    print('收藏的args', request.args.to_dict())
-    print('收藏的item', item.split(','))
+    # print('收藏的args', request.args.to_dict())
+    # print('收藏的item', item.split(','))
     if json.dumps(item) not in r.lrange(session['user'] + ':favorite', 0, -1):
         r.rpush(session['user'] + ':favorite', json.dumps(item))
-        flash('收藏成功!')
+        flash(_('Success'))
     else:
-        flash('之前已经收藏了!')
+        flash(_("It's been collected before!"))
     return redirect('/favorite')
 
 
@@ -562,7 +594,7 @@ def favorite_del():
     item = request.args.get('item')
     r.lrem(session['user'] + ':favorite', 0, json.dumps(item))
     if json.dumps(item) not in r.lrange(session['user'] + ':favorite', 0, -1):
-        flash('删除成功!')
+        flash(_('Deleted!'))
     return redirect('/favorite')
 
 
@@ -620,7 +652,6 @@ def play():
     # print(request.args)
     movie_address = request.args['movie_address']
     if '$_$' in movie_address:
-        #movie_address=/tv/大明王朝1566/大明王朝1566-11.mp4$_$uid=4380a1441a5dee5b299729e3bdc0b617$_$server=http://192.168.203.25:8567/
         temp_list = movie_address.split('$_$')
         movie_address = temp_list[0]
         server = temp_list[-1]
@@ -630,9 +661,6 @@ def play():
         uid = request.args['uid']
     movie_address = url_replace_1(movie_address)
 
-    # movie_address = movie_address.encode('utf-8')
-    # #print(movie_address)
-    # movie_address = movie_address.replace("%26", "&")
     if 'http://' not in server:
         server = 'http://' + request.args['server']
     movie_address = server + movie_address

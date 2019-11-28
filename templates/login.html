@@ -12,24 +12,46 @@
                         <div class="box">
                             <div class="content">
                                 <form class="form-control" action="/login" method="post">
-                                    <div class="field">
-                                        <label class="label">PIN CODE</label>
-                                        <div class="control">
-                                            <input autocomplete="on" name="pin_code" class="input" type="text">
-                                        </div>
-                                    </div>
+                                    {% if set_language %}
+                                        <div class="field">
+                                            <label class="label">Language 语言</label>
 
-                                    <div class="field">
-                                        <div class="control">
-                                            <label class="checkbox">
-                                                <input type="checkbox" name="check_box" checked>
-                                                记住我 <a href="/login/init">初始化PIN码？</a>
-                                            </label>
-                                        </div>
-                                    </div>
+                                            <div class="control">
+                                                <div class="select">
+                                                    <select name="set_language">
+                                                        {% for key, language in AVAILABLE_LANGUAGES.items() %}
+                                                            {% if CURRENT_LANGUAGE == key %}
+                                                                <option value="{{ key }}"
+                                                                        selected>{{ language }}</option>
+                                                            {% else %}
+                                                                <option value="{{ key }}">{{ language }}</option>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
 
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="field">
+                                            <label class="label">{% trans %}Password{% endtrans %}</label>
+                                            <div class="control">
+                                                <input autocomplete="on" name="pin_code" class="input" type="text">
+                                            </div>
+                                        </div>
+
+                                        <div class="field">
+                                            <div class="control">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" name="check_box" checked>
+                                                    {% trans %}Remember me.{% endtrans %} <a href="/login/init">
+                                                    {% trans %}Initial PIN code?{% endtrans %}</a>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                     <div class="control is-centered">
-                                        <button class="button is-primary">Submit</button>
+                                        <button class="button is-primary">{% trans %}Submit{% endtrans %}</button>
                                     </div>
                                 </form>
 

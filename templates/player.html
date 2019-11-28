@@ -14,10 +14,11 @@
 {% if movie.split('.')[-1] in ['rmvb','avi','dat','rm'] %}
 <br>
     <br>
-    <div class="text-center">抱歉，不支持播放'rmvb','avi','dat','rm'格式文件。请尽量使用'mp4'文件。</div>
+    <div class="text-center">{% trans %}Sorry, it is not supported to play 'rmvb', 'avi', 'dat', 'rm' format files. Try to use the 'mp4' file.{% endtrans%}</div>
 
     <br>
-请下载文件到本地播放：
+    {% trans %}Please download the file to play locally:{% endtrans%}
+
     <a href="{{ movie }}">{{ movie }}</a>
 
 {% else %}
