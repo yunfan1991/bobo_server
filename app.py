@@ -382,19 +382,20 @@ def all():
         i = (page - 1) * per_page
         List1 = List[i:i + 60]
         pagination = Pagination(page=page, per_page=per_page, total=len(List), record_name='List')
+        session['host_ip'] = r.get('media_server')
         template_data = {
-            'title': 'REDIS_WEB',
+            'title': 'BoBo Media',
             'is_active_logistics': 'color: deeppink',
             'data': List1,
             'pagination': pagination,
             'pagenation_replace': pagenation_replace,
-            'server': 'http://127.0.0.1:8566'
+            'server': session['host_ip']
 
         }
         # return str(form.carrier_intro.)
         # return jsonify(List)
         # return render_template('index.html', **template_data)
-        session['host_ip'] = r.get('media_server')
+
     else:
         return redirect('/m/?dir=study')
 

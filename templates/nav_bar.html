@@ -5,7 +5,17 @@
                 <strong class="has-text-success"><i class="fas fa-video is-large"></i></strong>&nbsp;&nbsp;<strong
                     class="has-text-white">B_Media</strong>
             </a>
+<a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=movie">
 
+                        电影 </a>
+
+                    <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=tv">
+
+                        剧集 </a>
+
+                    <a class="navbar-item bd-navbar-item-documentation " href="/m/?dir=cartoon">
+
+                        动漫 </a>
             <a role="button" class="navbar-burger is-primary" aria-label="menu" aria-expanded="false"
                onclick="document.querySelector('.navbar-menu').classList.toggle('is-active'); document.querySelector('.navbar-burger').classList.toggle('is-active');">
                 <span aria-hidden="true"></span>
@@ -19,17 +29,7 @@
                 {% if session['user'] == 'normal' %}
 
 
-                    <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=movie">
 
-                        电影 </a>
-
-                    <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=tv">
-
-                        剧集 </a>
-
-                    <a class="navbar-item bd-navbar-item-documentation " href="/m/?dir=cartoon">
-
-                        动画 </a>
                     <a class="navbar-item bd-navbar-item-documentation " href="/m/?dir=show">
 
                         综艺 </a>
@@ -43,7 +43,7 @@
 
                     <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=special">
 
-                        专辑 </a>
+                        专题 </a>
                 {% endif %}
                 {% if session['user'] %}
                     <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=study">

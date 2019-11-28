@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import img_list with context %}
+{% from 'macros.html' import pure_list with context %}
 {% from 'macros.html' import file_list with context %}
 {% from 'macros.html' import dir_list with context %}
 {% block page_css %}
@@ -19,8 +19,8 @@
         <div class="tile is-ancestor">
             <div class="tile is-parent">
                 <article class="tile is-child notification is-$light is-multiline">
-                    {% if cate == 'movie' or cate == 'cartoon' %}
-                    {{ file_list(movies) }}
+                    {% if cate == 'movie' or cate == 'cartoon'%}
+                    {{ pure_list(movies) }}
                     {% elif is_dir %}
                         {{ dir_list(movies) }}
 

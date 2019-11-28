@@ -10,7 +10,7 @@ from flask import request, redirect, url_for
 # images_DIR
 import socket
 import requests, PTN
-import time,uuid
+import time, uuid
 
 
 # from app import db
@@ -42,7 +42,7 @@ def get_api():
     except:
         with open(os.path.join(os.path.abspath('.'), 'config/api_key.txt'), 'r') as f:
             uuid_address = f.read()
-            #print('open api.txt .....')
+            # print('open api.txt .....')
             print('current_api', uuid_address)
     return uuid_address
 
@@ -61,7 +61,6 @@ def save_send_api_ip(api_key, host_ip, api_server):
         with open(api_key + '.txt', 'w') as f:
             f.write(host_ip)
     r = requests.post(api_server + "/v1/write_user", json={"api_key": api_key, 'host_ip': host_ip})
-
 
 
 def get_parse(movie):
@@ -116,17 +115,23 @@ def get_parse(movie):
 
 def pure_movie_name(movie_name):
     info = get_parse(movie_name)
-    #pprint.pprint(info)
-    episode= ''
+    # pprint.pprint(info)
+    episode = ''
     season = ''
     audio = ''
+    year = ''
     try:
-        episode = info['episode']
-        season = info['season']
-        audio = info['audio']
+        if info['year']:
+            year = ' - ' + str(info['year'])
+        if info['name_chinese']:
+            name = info['name_chinese']
+            return name + str(year)
+        elif info['title']:
+            return info['title'] + str(year)
+        else:
+            return info['name_english']  + str(year)
     except:
-        return info['name_chinese']
-    return info['name_chinese'] + ' ' + str(season) + '-' +str(episode)+ ' ' + str(audio)
+            return movie_name[0:30] + str(year)
 
 
 def get_douban(movie, year=None):
@@ -134,8 +139,8 @@ def get_douban(movie, year=None):
     movie = movie.split('HD')[0]
     movie = movie.split('1024')[0]
     if year:
-        #0df993c66c0c636e29ecbb5344252a4a
-        #0b2bdeda43b5688921839c8ecb20399b
+        # 0df993c66c0c636e29ecbb5344252a4a
+        # 0b2bdeda43b5688921839c8ecb20399b
         url = 'http://t.yushu.im//v2/movie/search?q=' + str(
             movie) + ',' + str(
             year)

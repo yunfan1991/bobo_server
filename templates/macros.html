@@ -16,6 +16,25 @@
     </div>
 {% endmacro %}
 
+
+{% macro pure_list(movies) %}
+    <div class="content">
+        <ul>
+            {% for movie in movies %}
+                <li class="is-link">
+                    <i class="has-text-grey fa fa-video"></i> <a class="has-text-link"
+                                                                 href="/play?movie_address={{ movie[0]|trim|urlencode }}/{{ movie[1]|urlencode }}&uid={{ movie[2] }}&server={{ session['host_ip'] }}">{{ movie[1]|pure_name }}</a>
+                    <span class="has-text-grey">{{ movie[3] }}G</span>  {% if is_favorite %}
+                    <a href="/favorite/del/?item={{ movie|join(',') }}"><i
+                            class="fa fa-trash has-text-grey"></i></a> {% else %}
+                    <a href="/favorite/add/?item={{ movie|join(',') }}"><i
+                            class="fa fa-heart has-text-grey"></i></a>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
 {% macro dir_list(movies) %}
     <div class="content">
         <ul>
