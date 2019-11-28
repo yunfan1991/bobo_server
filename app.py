@@ -385,6 +385,17 @@ class movie_list(Resource):
 
 api.add_resource(movie_list, '/v1/movie_list')
 
+@app.route('/update_bobo')
+@login_required
+def update_system():
+    try:
+        print('exec cd /home/bobo_server')
+        os.popen('cd /home/bobo_server')
+        output2 = os.popen('git pull')
+        return output2.read()
+    except Exception as e:
+        return str(e)
+
 
 @app.route('/all')
 @app.route('/New')
