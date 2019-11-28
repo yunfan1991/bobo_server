@@ -101,6 +101,8 @@ class bobo_server_main():
                 # print('$$$$$$$$$')
                 dir_temp = []
                 if dirs:
+                    if '@eaDir' in dirs:
+                        dirs.remove('@eaDir')
                     for d in dirs:
                         d_t = [d, int(os.path.getmtime(root + '/' + d))]
                         # print('d_t',d_t)
@@ -152,9 +154,6 @@ class FileEventHandler(FileSystemEventHandler):
 
     def update(self, walk_sub_dir, action='scan'):
         bobo_server = bobo_server_main()
-        # /Volumes/video/special/学厨艺
-        #/Volumes/video/movie
-        #/Volumes/video/study/万门中学初中全套/化学/初中化学/b. 基础初中化学九年级下（张龙海）-42/06 第6讲 溶液的浓度
         dir_name = walk_sub_dir.replace(str(web_server_dir) + '/', '').replace('/', ':')
         data_new = r.keys(pattern='media_server:' + dir_name + ':dirs')
         for item in data_new:
