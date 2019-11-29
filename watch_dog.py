@@ -19,6 +19,7 @@ r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses
 
 #web_server_dir = '/Volumes/video'
 web_server_dir = '/media'
+dirs = ['movie', 'tv', 'cartoon', 'mtv', 'show', 'special', 'study', 'doc', 'audio']
 
 try:
     with open('api_server.txt', 'r') as f:
@@ -88,13 +89,14 @@ class bobo_server_main():
                             pass
                         # 配上文件属性
                         else:
-                            # print(root + '/' + temp_file)
-                            file_size = round(os.path.getsize(root + '/' + temp_file) / (1024 * 1024 * 1024), 2)
-                            md5_name = temp_file
-                            uid = hashlib.md5(md5_name.encode()).hexdigest()  # 放在服务器生成uuid
-                            file_c_time = os.path.getmtime(root + '/' + temp_file)
-                            file_t = [root.replace(directory, '') + '/', temp_file, uid, file_size, int(file_c_time)]
-                            temp_file_list.append(file_t)
+                            #print(root + '/' + temp_file)
+                            if os.path.exists(root + '/' + temp_file):
+                                file_size = round(os.path.getsize(root + '/' + temp_file) / (1024 * 1024 * 1024), 2)
+                                md5_name = temp_file
+                                uid = hashlib.md5(md5_name.encode()).hexdigest()  # 放在服务器生成uuid
+                                file_c_time = os.path.getmtime(root + '/' + temp_file)
+                                file_t = [root.replace(directory, '') + '/', temp_file, uid, file_size, int(file_c_time)]
+                                temp_file_list.append(file_t)
                     r.set('media_server:' + root.replace(directory + '/', '').replace('/', ':') + ':files',
                           json.dumps(temp_file_list))
                     # print(temp_file_list)
@@ -135,7 +137,7 @@ class bobo_server_main():
                         file_t = [root.replace(web_server_dir, '') + '/', temp_file, uid, file_size, int(file_c_time)]
                         temp_file_list.append(file_t)
                 files_key = 'media_server:' + root.replace(web_server_dir + '/', '').replace('/', ':') + ':files'
-                #print('files key',directory,files_key)
+                # print('files key',directory,files_key)
                 r.set(files_key, json.dumps(temp_file_list))
                 # print(temp_file_list)
             # print('$$$$$$$$$')
@@ -145,8 +147,9 @@ class bobo_server_main():
                     d_t = [d, int(os.path.getmtime(root + '/' + d))]
                     # print('d_t',d_t)
                     dir_temp.append(d_t)
-                dirs_key = ('media_server:' + root.replace(web_server_dir, '').replace('/', ':') + ':dirs').replace('::', ':')
-                #print('dirs key', directory, dirs_key)
+                dirs_key = ('media_server:' + root.replace(web_server_dir, '').replace('/', ':') + ':dirs').replace(
+                    '::', ':')
+                # print('dirs key', directory, dirs_key)
                 r.set(dirs_key, json.dumps(dir_temp))
 
 
@@ -168,7 +171,7 @@ class FileEventHandler(FileSystemEventHandler):
     def on_moved(self, event):
         if os.path.isdir(event.src_path):
             # 删除被删除的文件的keys
-            #print('删除被删除的文件的目录', event.src_path )
+            # print('删除被删除的文件的目录', event.src_path )
             self.update(event.src_path, 'del')
 
         '''
@@ -210,6 +213,14 @@ class FileEventHandler(FileSystemEventHandler):
 if __name__ == "__main__":
     if not r.get('is_init'):
         print('未初始化，开始全盘扫描')
+        # 创建初始目录
+        try:
+            for item in dirs:
+                temp_dir = web_server_dir + "/" + dirs
+                if not os.path.exists(temp_dir):
+                    os.makedirs(temp_dir)
+        except:
+            pass
         bobo_server = bobo_server_main()
         bobo_server.scan(web_server_dir)
         time.sleep(120)

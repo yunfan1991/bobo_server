@@ -6,141 +6,153 @@
 
 {% block main %}
 
-<div class="container">
-    <div class="has-text-centered"> {{ movie.split('/')[-1]}}  </div>
-    <script type='text/javascript' src='/static/js/LocalDB.min.js'></script>
+    <div class="container">
+        <div class="has-text-centered"> {{ movie.split('/')[-1] }}  </div>
+        <script type='text/javascript' src='/static/js/LocalDB.min.js'></script>
 
 
-{% if movie.split('.')[-1] in ['rmvb','avi','dat','rm'] %}
-<br>
-    <br>
-    <div class="text-center">{% trans %}Sorry, it is not supported to play 'rmvb', 'avi', 'dat', 'rm' format files. Try to use the 'mp4' file.{% endtrans%}</div>
+        {% if movie.split('.')[-1] in ['rmvb','avi','dat','rm'] %}
+            <br>
+            <br>
+            <div class="text-center">{% trans %}Sorry, it is not supported to play 'rmvb', 'avi', 'dat', 'rm' format
+                files. Try to use the 'mp4' file.{% endtrans %}</div>
 
-    <br>
-    {% trans %}Please download the file to play locally:{% endtrans%}
+            <br>
+            {% trans %}Please download the file to play locally:{% endtrans %}
 
-    <a href="{{ movie }}">{{ movie }}</a>
+            <a href="{{ movie }}">{{ movie }}</a>
 
-{% else %}
-<div class="dplayer"></div>
-</div>
-    {% if end_with == 'flv' or end_with == 'FLV' %}
+        {% else %}
+            <div class="dplayer"></div>
+            </div>
+            {% if end_with == 'flv' or end_with == 'FLV' %}
 
-<script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.js"></script>
-        <div class="has-text-centered">
-<video id="videoElement" controls></video>
+                <script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.js"></script>
+                <div class="has-text-centered">
+                    <video id="videoElement" controls></video>
 
-</div>
-<script>//js标签开始
-var address='{{ movie }}';
-        var result = address.replace('&amp;', '&').replace('&#39;', "'");
-    if (flvjs.isSupported()) {//检查flvjs能否正常使用
-        var videoElement = document.getElementById('videoElement');//使用id选择器找到第二步设置的dom元素
-        var flvPlayer = flvjs.createPlayer({//创建一个新的flv播放器对象
-            type: 'flv',//类型flv
-            url: result//flv文件地址
-        });
-        flvPlayer.attachMediaElement(videoElement);//将flv视频装载进video元素内
-        flvPlayer.load();//载入视频
-        flvPlayer.play();//播放视频，如果不想要自动播放，去掉本行
-    }
-</script>
-
-
-
-{% elif  end_with == 'swf' or end_with == 'SWF'%}
-
-
-<div class="has-text-centered">
-        <object data="{{ movie }}" type="application/x-shockwave-flash">
-            <embed src="{{ movie }}" width="800" height="600"/></object>
-
-        </div>
-
-
-
-        {% else  %}
-  <script src="/static/node_modules/dplayer/dist/DPlayer.min.js"></script>
-<script>
-var cookie = {
-        set: function(name, value) {
-                var Days = 1;
-                var exp = new Date();
-                exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
-                document.cookie = name + '=' + escape(value) + ';expires=' + exp.toGMTString();
-                },
-                get: function(name) {
-                        var arr, reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)');
-                        if(arr = document.cookie.match(reg)) {
-                                return unescape(arr[2]);
-                        } else {
-                                return null;
-                        }
-                },
-                del: function(name) {
-                        var exp = new Date();
-                        exp.setTime(exp.getTime() - 1);
-                        var cval = getCookie(name);
-                        if(cval != null) {
-                                document.cookie = name + '=' + cval + ';expires=' + exp.toGMTString();
-                        }
+                </div>
+                <script>//js标签开始
+                var address = '{{ movie }}';
+                var result = address.replace('&amp;', '&').replace('&#39;', "'");
+                if (flvjs.isSupported()) {//检查flvjs能否正常使用
+                    var videoElement = document.getElementById('videoElement');//使用id选择器找到第二步设置的dom元素
+                    var flvPlayer = flvjs.createPlayer({//创建一个新的flv播放器对象
+                        type: 'flv',//类型flv
+                        url: result//flv文件地址
+                    });
+                    flvPlayer.attachMediaElement(videoElement);//将flv视频装载进video元素内
+                    flvPlayer.load();//载入视频
+                    flvPlayer.play();//播放视频，如果不想要自动播放，去掉本行
                 }
-        };
-        var videoID = '{{ uid }}';//设置一个视频的id （唯一，可以设置为页面地址,可用md5）
-        var cookieTime = cookie.get('time_' + videoID);
-        if(!cookieTime || cookieTime == undefined) {
-                cookieTime = 0;
-        };
+                </script>
 
-    var address='{{ movie }}';
-{% set temp = movie|next_episode %}
-    var next_address = '{{ temp }}';
-    var result = address.replace('&amp;', '&').replace('&#39;', "'");
-    var dp = new DPlayer({
-        element: document.getElementsByClassName('dplayer')[0],
-        autoplay: true,
-        hotkey: true,
-        screenshot: true,
-        theme: '#FADFA3',
-        loop: true,
-        video: {
-            url: result,
-            pic: ''
-        },
-        danmaku: {
-            id: '{{ uid }}',
-            api: 'http://118.89.173.67:8080/danmu/',
-            token: '',
-            maximum: 10000
-        }
-    });
-    if(cookieTime > 0) {
-                dp.seek(cookieTime);
-}
 
-dp.on('timeupdate', function () {
-    cookie.set('time_' + videoID, dp.video.currentTime);
-});
-dp.on('ended', function (){
-        if(next_address){
-            top.location.href = next_address;
-        }
-    });
-</script>
 
+            {% elif end_with == 'swf' or end_with == 'SWF' %}
+
+
+                <div class="has-text-centered">
+                    <object data="{{ movie }}" type="application/x-shockwave-flash">
+                        <embed src="{{ movie }}" width="800" height="600"/>
+                    </object>
+
+                </div>
+
+
+
+            {% else %}
+                <script src="/static/node_modules/dplayer/dist/DPlayer.min.js"></script>
+                <script>
+                    var cookie = {
+                        set: function (name, value) {
+                            var Days = 1;
+                            var exp = new Date();
+                            exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+                            document.cookie = name + '=' + escape(value) + ';expires=' + exp.toGMTString();
+                        },
+                        get: function (name) {
+                            var arr, reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)');
+                            if (arr = document.cookie.match(reg)) {
+                                return unescape(arr[2]);
+                            } else {
+                                return null;
+                            }
+                        },
+                        del: function (name) {
+                            var exp = new Date();
+                            exp.setTime(exp.getTime() - 1);
+                            var cval = getCookie(name);
+                            if (cval != null) {
+                                document.cookie = name + '=' + cval + ';expires=' + exp.toGMTString();
+                            }
+                        }
+                    };
+                    var videoID = '{{ uid }}';//设置一个视频的id （唯一，可以设置为页面地址,可用md5）
+                    var cookieTime = cookie.get('time_' + videoID);
+                    if (!cookieTime || cookieTime == undefined) {
+                        cookieTime = 0;
+                    }
+                    ;
+
+                    var address = '{{ movie }}';
+                    {% set temp = movie|next_episode %}
+                    var next_address = '{{ temp }}';
+                    var result = address.replace('&amp;', '&').replace('&#39;', "'");
+                    var dp = new DPlayer({
+                        element: document.getElementsByClassName('dplayer')[0],
+                        autoplay: true,
+                        hotkey: true,
+                        screenshot: true,
+                        theme: '#FADFA3',
+                        loop: true,
+                        video: {
+                            url: result,
+                            pic: ''
+                        },
+                        subtitle: {
+                            url: '{{ movie|subtitle }}',
+                            font: 'Microsoft YaHei',
+                            type: 'webvtt',
+                            fontSize: '41px',
+                            bottom: '2%',
+                            color: '#FFFF00',
+                        },
+                        danmaku: {
+                            id: '{{ uid }}',
+                            api: 'http://118.89.173.67:8080/danmu/',
+                            token: '',
+                            maximum: 10000
+                        }
+                    });
+                    if (cookieTime > 0) {
+                        dp.seek(cookieTime);
+                    }
+
+                    dp.on('timeupdate', function () {
+                        cookie.set('time_' + videoID, dp.video.currentTime);
+                    });
+                    dp.on('ended', function () {
+                        if (next_address) {
+                            top.location.href = next_address;
+                        }
+                    });
+                </script>
+
+            {% endif %}
         {% endif %}
-{% endif %}
-<hr class="is-light">
+    <hr class="is-light">
     <script src='http://ads.wulibobo.com/ads/ad_player_{{ session['user'] }}.js' language='javascript'></script
-<hr class="is-light">
+    <hr class="is-light">
 {% endblock %}
 {% block scripts %}
     <script>
-    var movie_orin = '{{ movie }}';
-    var movie_name = movie_orin.split("/")[movie_orin.split('/').length - 1];
-    var url = window.location.href;
-     if (url.indexOf("?") != -1 && url.indexOf("secret-") == -1) {   
-         str = url.split('?')[1];
-        localStorage.setItem(movie_name, str);}
+        var movie_orin = '{{ movie }}';
+        var movie_name = movie_orin.split("/")[movie_orin.split('/').length - 1];
+        var url = window.location.href;
+        if (url.indexOf("?") != -1 && url.indexOf("secret-") == -1) {
+            str = url.split('?')[1];
+            localStorage.setItem(movie_name, str);
+        }
     </script>
 {% endblock %}

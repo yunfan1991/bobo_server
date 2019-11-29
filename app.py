@@ -26,8 +26,11 @@ import time, hashlib
 from urllib import parse
 from markupsafe import Markup
 from urllib.parse import quote, unquote, urlencode
+import webvtt
 
 r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses=True)
+media_server = '/media'
+# media_server = '/Volumes/video'
 
 app = Flask(__name__)
 api = Api(app)
@@ -73,6 +76,48 @@ def urlencode_filter(s):
     movie_address = movie_address.replace('/\\', '/')
     encode_data = quote(movie_address)
     return encode_data
+
+
+@app.template_filter('subtitle')
+def urlencode_filter(s):
+    movie_address = s
+    temp_s = s.split('8567')
+    server = temp_s[0] + '8567'
+    # print('next address1:',temp_s)
+    movie_address = temp_s[-1]
+    movie_address = movie_address.replace('//', '/')
+    movie_address = movie_address.split('/')
+
+    file_name = movie_address[-1]
+    base = os.path.basename(file_name)
+    current_language = False
+    for key, language in app.config['LANGUAGES'].items():
+        subtitle_name = media_server + "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[
+            0] + '.' + key + '.srt'
+        vtt = "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[0] + '.' + key + '.vtt'
+        # print('subtitle name', subtitle_name)
+        if key == r.get('language'):
+            if os.path.exists(media_server + vtt):
+                current_language = True
+                return server + vtt
+            elif os.path.exists(subtitle_name):
+                webvtt.from_srt(subtitle_name).save()
+                current_language = True
+                return server + vtt
+    if not current_language:
+        for key, language in app.config['LANGUAGES'].items():
+            subtitle_name = media_server + "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[
+                0] + '.' + key + '.srt'
+            vtt = "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[0] + '.' + key + '.vtt'
+            # print('subtitle name', subtitle_name)
+            if os.path.exists(media_server + vtt):
+                return server + vtt
+            elif os.path.exists(subtitle_name):
+                webvtt.from_srt(subtitle_name).save()
+
+                return server + vtt
+
+    return ''
 
 
 @app.template_filter('next_episode')
@@ -173,7 +218,6 @@ def login_required(f):
 @login_required
 def index():
     try:
-
         is_cookie = check_cookie()
         if is_cookie:
             # print('index from cookie')
@@ -384,6 +428,7 @@ class movie_list(Resource):
 
 
 api.add_resource(movie_list, '/v1/movie_list')
+
 
 @app.route('/update_bobo')
 @login_required
