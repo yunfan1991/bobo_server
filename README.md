@@ -1,10 +1,10 @@
 # 欢迎您使用 bobo_server
 
-#一、简介
+# 一、简介
 
 bobo_server 是一个私人mp4媒体服务器，适合组织管理下载的mp4文件，尤其适合家庭媒体播放、青少年儿童幼儿视频学习资料的管理。
 
-#二、第一次运行
+# 二、第一次运行
 
 docker run -d -p 8567:8567 -p 8568:8568 --name bobo_server -v /Volumes/video:/media -v /data/config:/data yunfan1976/bobo_server
 
@@ -17,7 +17,7 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo_server -v /Volumes/video:/me
 https://usdl.synology.com/download/Package/spk/Docker/
 
 
-#三、本地视频目录凡例： 
+# 三、本地视频目录凡例： 
 
 电影 movie
 
@@ -35,15 +35,15 @@ MTV mtv
 
 专辑 special
 
-####孩子学习专用目录 study
+#### 孩子学习专用目录 study
 
-#四、第一次操作后的操作
+# 四、第一次操作后的操作
 
 停止 docker stop bobo_server
 
 运行 docker start bobo_server
 
-#五、浏览器操作 
+# 五、浏览器操作 
 
 成功运行后，打开浏览器，
 
@@ -55,7 +55,7 @@ MTV mtv
 
 学习PIN CODE 1234，仅可观看study目录
 
-#**** For English ***
+# **** For English ***
 
 First, bobo_server is a private mp4 media server, suitable for organizing and managing downloaded mp4 files, especially suitable for the management of video learning materials for children and children in home media.
 
