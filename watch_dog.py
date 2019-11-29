@@ -18,7 +18,7 @@ import redis
 r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses=True)
 
 #web_server_dir = '/Volumes/video'
-web_server_dir = '/media_server'
+web_server_dir = '/media'
 
 try:
     with open('api_server.txt', 'r') as f:
