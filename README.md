@@ -6,11 +6,16 @@ bobo_server 是一个私人mp4媒体服务器，适合组织管理下载的mp4�
 
 #二、第一次运行
 
-docker run -d -p 8567:8567 -p 8568:8568 --name bobo_server -v /Volumes/video:/media_server -v /data/config:/data yunfan1976/bobo_server
+docker run -d -p 8567:8567 -p 8568:8568 --name bobo_server -v /Volumes/video:/media -v /data/config:/data yunfan1976/bobo_server
 
 其中 /Volumes/video 替换为本地视频目录
 
 /data/config替换成一个本地目录，用来存放数据库文件
+
+### 群晖可手动安装Docker
+包地址
+https://usdl.synology.com/download/Package/spk/Docker/
+
 
 #三、本地视频目录凡例： 
 
