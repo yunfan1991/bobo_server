@@ -16,6 +16,9 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo_server -v /Volumes/video:/me
 包地址
 https://usdl.synology.com/download/Package/spk/Docker/
 
+#### 群晖NAS安装BOBO_SERVER视频教程
+B站
+https://www.bilibili.com/video/av77407158
 
 ## 三、本地视频目录凡例： 
 
