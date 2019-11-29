@@ -3,6 +3,7 @@
         <div class="navbar-brand">
             <a class="navbar-item  has-icon " href="/">
                 <strong class="has-text-success"><i class="fas fa-video is-large"></i></strong>
+                &nbsp;<strong>B_Media</strong>
             </a>
 <a class="navbar-item bd-navbar-item-documentation" href="/m/?dir=movie">
  {% if session['user'] == 'normal' %}
@@ -53,7 +54,13 @@
 
             </div>
 
-            <div class="navbar-item">
+
+
+            <div class="navbar-end">
+
+                {% if session['user'] %}
+
+                    <div class="navbar-item">
 
                 <form id='search' class="field has-addons" method="get" action="/search/?q=">
 
@@ -68,10 +75,6 @@
                 </form>
 
             </div>
-
-            <div class="navbar-end">
-
-                {% if session['user'] %}
 
                     <div class="navbar-item is-mobile has-background-primary">
                         <a class="has-text-white is-desktop" href="/favorite">{% trans %}Collect{% endtrans%}</a>
