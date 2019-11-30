@@ -116,7 +116,7 @@
                             type: 'webvtt',
                             fontSize: '41px',
                             bottom: '2%',
-                            color: '#FFFF00',
+                            color: '#E47833',
                         },
                         danmaku: {
                             id: '{{ uid }}',
@@ -144,6 +144,26 @@
     <hr class="is-light">
     <script src='http://ads.wulibobo.com/ads/ad_player_{{ session['user'] }}.js' language='javascript'></script
     <hr class="is-light">
+    <div class="container has-text-centered">
+
+    <!-- 社会化评论插件 start -->
+<div class="ds-thread" id="ds-thread" data-key="{{uid}}" data-title="评论" data-url=""></div>
+<script type="text/javascript">
+    var commentOptions = {name: 'bobo_server', site: 'bobo_server', domain: 'http://review.wulibobo.com'};
+    (function () {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';
+        ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//cdn.fastadmin.net/assets/addons/comment/js/embed.min.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+            || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 社会化评论插件 end -->
+
+
+    </div>
 {% endblock %}
 {% block scripts %}
     <script>
