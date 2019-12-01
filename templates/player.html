@@ -9,6 +9,7 @@
     <div class="container">
         <div class="has-text-centered"> {{ movie.split('/')[-1] }}  </div>
         <script type='text/javascript' src='/static/js/LocalDB.min.js'></script>
+        <script type='text/javascript' src='/static/js/jquery.min.js'></script>
 
 
         {% if movie.split('.')[-1] in ['rmvb','avi','dat','rm'] %}
@@ -23,11 +24,11 @@
             <a href="{{ movie }}">{{ movie }}</a>
 
         {% else %}
-            <div class="dplayer"></div>
+            <div id="video"></div>
             </div>
             {% if end_with == 'flv' or end_with == 'FLV' %}
 
-                <script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.js"></script>
+                <script src="/static/js/flv.js"></script>
                 <div class="has-text-centered">
                     <video id="videoElement" controls></video>
 
@@ -95,12 +96,25 @@
                     }
                     ;
 
+                    function h2_remove() {
+                        $('#h2_player_pause').remove();
+                    }
+                    ;
+
+                    function h2_pause() {
+                        $width = $('#video').width() / 2;
+                        $height = $('#video').height() / 2;
+                        $top = $('#video').height() / 4;
+                        $left = $('#video').width() / 4;
+                        $('#video').before('<iframe id="h2_player_pause" class="embed-responsive-item" src="/static/ad/player_pause_{{ session['user'] }}.html" frameborder="0" scrolling="no" allowtransparency="true" style="position:absolute;z-index:2;top:' + $top + 'px;left:' + $left + 'px;width:' + $width + 'px;height:' + $height + 'px"></iframe>');
+                    }
+                    ;
                     var address = '{{ movie }}';
                     {% set temp = movie|next_episode %}
                     var next_address = '{{ temp }}';
                     var result = address.replace('&amp;', '&').replace('&#39;', "'");
                     var dp = new DPlayer({
-                        element: document.getElementsByClassName('dplayer')[0],
+                        container: document.getElementById('video'),
                         autoplay: true,
                         hotkey: true,
                         screenshot: true,
@@ -116,11 +130,11 @@
                             type: 'webvtt',
                             fontSize: '41px',
                             bottom: '2%',
-                            color: '#E47833',
+                            color: '#FFFF00',
                         },
                         danmaku: {
                             id: '{{ uid }}',
-                            api: 'http://118.89.173.67:8080/danmu/',
+                            api: 'http://danmu.wulibobo.com/danmu/',
                             token: '',
                             maximum: 10000
                         }
@@ -137,6 +151,13 @@
                             top.location.href = next_address;
                         }
                     });
+                    dp.on('pause', function () {
+                        h2_pause();
+                    })
+                    dp.on('play', function () {
+                        h2_remove();
+                    });
+
                 </script>
 
             {% endif %}
@@ -146,21 +167,21 @@
     <hr class="is-light">
     <div class="container has-text-centered">
 
-    <!-- 社会化评论插件 start -->
-<div class="ds-thread" id="ds-thread" data-key="{{uid}}" data-title="评论" data-url=""></div>
-<script type="text/javascript">
-    var commentOptions = {name: 'bobo_server', site: 'bobo_server', domain: 'http://review.wulibobo.com'};
-    (function () {
-        var ds = document.createElement('script');
-        ds.type = 'text/javascript';
-        ds.async = true;
-        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//cdn.fastadmin.net/assets/addons/comment/js/embed.min.js';
-        ds.charset = 'UTF-8';
-        (document.getElementsByTagName('head')[0]
-            || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-</script>
-<!-- 社会化评论插件 end -->
+        <!-- 社会化评论插件 start -->
+        <div class="ds-thread" id="ds-thread" data-key="{{ uid }}" data-title="评论" data-url=""></div>
+        <script type="text/javascript">
+            var commentOptions = {name: 'bobo_server', site: 'bobo_server', domain: 'http://review.wulibobo.com'};
+            (function () {
+                var ds = document.createElement('script');
+                ds.type = 'text/javascript';
+                ds.async = true;
+                ds.src = '/static/assets/addons/comment/js/embed.min.js';
+                ds.charset = 'UTF-8';
+                (document.getElementsByTagName('head')[0]
+                    || document.getElementsByTagName('body')[0]).appendChild(ds);
+            })();
+        </script>
+        <!-- 社会化评论插件 end -->
 
 
     </div>
