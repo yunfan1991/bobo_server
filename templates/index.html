@@ -24,8 +24,27 @@
 
     </div>
     </div>
+<div
+        class="has-text-centered" onmouseleave="document.getElementById('qrcode').style.display = 'none';" onmouseover="document.getElementById('qrcode').style.display = 'block';">
+   <a href="#"><i class="fa fa-qrcode"></i></a>
+</div>
 
+    <div class="columns">
+  <div class="column is-half is-offset-one-quarter"></div>
+        <div style="display: none;" id="qrcode"></div>
+</div>
 {% endblock %}
 {% block scripts %}
+<script src="/static/js/qrcode.js"></script>
+<script>
 
+    var qrcode = new QRCode('qrcode', {
+    text: window.location.href,
+    width: 256,
+    height: 256,
+    colorDark: '#000000',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+});
+</script>
 {% endblock %}

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, \
     current_app, request, make_response, redirect, url_for, flash, jsonify
-
+import urllib.parse
 from datetime import timedelta, datetime, time
 import json
 from flask_restful import reqparse, abort, Api, Resource
@@ -233,10 +233,12 @@ def index():
         return redirect('/login')
 
 
+
 @app.route('/login', methods=['get', 'post'])
 def login():
     data = {}
     study = False
+    #print('netx', request.args.get('next'))
     session['user'] = False
     if request.method == 'POST':
         data = request.form
@@ -273,7 +275,15 @@ def login():
                 response.set_cookie(app.config['COOKIE_NAME'], cookie_value)
                 # print(str(cookie_value))
                 return response
-            redirect
+            else:
+                next = urllib.parse.unquote(request.args.get('next')).replace(r.get('server_address'),'')
+                if next:
+                    response = make_response(redirect(next))
+
+                else:
+                    response = make_response(redirect(url_for('index')))
+                return response
+
         else:
             flash(_('Authentication failed'))
             return redirect('/login')
