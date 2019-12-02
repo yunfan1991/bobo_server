@@ -10,6 +10,8 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo_server -v /Volumes/video:/me
 
 其中 /Volumes/video 替换为本地视频目录
 
+### 注意，bobo_server将会把所有不支持通过网页播放的视频格式转换为mp4格式
+
 /data/config替换成一个本地目录，用来存放数据库文件
 
 #### 群晖可手动安装Docker

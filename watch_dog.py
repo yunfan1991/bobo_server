@@ -1,23 +1,14 @@
-import os, threading
-import uuid
-import socket
 from utils import *
-from hashlib import *
-import hashlib, base64
-import os, re, datetime, pickle, zlib, json
-import requests
-from pyqrcode import create
-import sys
-import png
+import hashlib
+import os, datetime, json
 from watchdog.observers import Observer
 from watchdog.events import *
-from operator import itemgetter
 import time
 import redis
 
 r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses=True)
 
-#web_server_dir = '/Volumes/video'
+# web_server_dir = '/Volumes/video'
 web_server_dir = '/media'
 dirs = ['movie', 'tv', 'cartoon', 'mtv', 'show', 'special', 'study', 'doc', 'audio']
 
@@ -89,13 +80,14 @@ class bobo_server_main():
                             pass
                         # 配上文件属性
                         else:
-                            #print(root + '/' + temp_file)
+                            # print(root + '/' + temp_file)
                             if os.path.exists(root + '/' + temp_file):
                                 file_size = round(os.path.getsize(root + '/' + temp_file) / (1024 * 1024 * 1024), 2)
                                 md5_name = temp_file
                                 uid = hashlib.md5(md5_name.encode()).hexdigest()  # 放在服务器生成uuid
                                 file_c_time = os.path.getmtime(root + '/' + temp_file)
-                                file_t = [root.replace(directory, '') + '/', temp_file, uid, file_size, int(file_c_time)]
+                                file_t = [root.replace(directory, '') + '/', temp_file, uid, file_size,
+                                          int(file_c_time)]
                                 temp_file_list.append(file_t)
                     r.set('media_server:' + root.replace(directory + '/', '').replace('/', ':') + ':files',
                           json.dumps(temp_file_list))

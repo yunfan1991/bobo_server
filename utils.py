@@ -1,12 +1,7 @@
-import requests
 import json
-import requests
-import os, re
-from io import BytesIO
-import time
+import os
 import re
 from flask import request, redirect, url_for
-# images_DIR
 import socket
 import requests, PTN
 import time, uuid
@@ -128,9 +123,9 @@ def pure_movie_name(movie_name):
         elif info['title']:
             return info['title'] + str(year)
         else:
-            return info['name_english']  + str(year)
+            return info['name_english'] + str(year)
     except:
-            return movie_name[0:30] + str(year)
+        return movie_name[0:30] + str(year)
 
 
 def get_douban(movie, year=None):

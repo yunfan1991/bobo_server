@@ -237,7 +237,7 @@ class FileEventHandler(FileSystemEventHandler):
                     time.sleep(1)
                     if temp_dir:
                         print('目录改动', temp_dir)
-                        #time.sleep()
+                        # time.sleep()
                         job_scan(temp_dir)
 
 
@@ -246,7 +246,7 @@ if __name__ == '__main__':
     work_obj.is_scan = 0
     work_obj.is_convert = 0
     db.commit()
-    #schedule.every().day.at("01:30").do(job_scan)
+    # schedule.every().day.at("01:30").do(job_scan)
     schedule.every().day.at("01:00").do(job_convert)
     job_scan()
     time.sleep(6)
