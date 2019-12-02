@@ -60,6 +60,10 @@ MTV mtv
 
 学习PIN CODE 1234，仅可观看study目录
 
+## 六、字幕支持
+
+bobo_server 当前仅支持.srt格式字幕，请将字幕格式设置为 文件名.en.srt(英文字幕) 或 文件名.chs.srt(中文字幕)
+
 ## **** For English ***
 
 First, bobo_server is a private mp4 media server, suitable for organizing and managing downloaded mp4 files, especially suitable for the management of video learning materials for children and children in home media.
