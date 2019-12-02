@@ -1,7 +1,6 @@
 import requests
 import json
 import requests
-from PIL import Image
 import os, re
 from io import BytesIO
 import time
@@ -158,11 +157,6 @@ def get_douban(movie, year=None):
 
 
 import pprint
-
-
-# pprint.pprint(get_douban('大江大河','2018'))
-
-# pprint.pprint(get_parse('摄影机不要停.One.Cut.of.the.Dead.2018.BD720P.X264.AAC.Japanese.CHS.Mp4Ba'))
 
 
 def url_replace_1(movie_address):

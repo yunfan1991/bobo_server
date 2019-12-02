@@ -23,8 +23,7 @@ import redis
 # from flask_login import LoginManager, login_required
 
 import time, hashlib
-from urllib import parse
-from markupsafe import Markup
+
 from urllib.parse import quote, unquote, urlencode
 import webvtt
 
@@ -233,12 +232,11 @@ def index():
         return redirect('/login')
 
 
-
 @app.route('/login', methods=['get', 'post'])
 def login():
     data = {}
     study = False
-    #print('netx', request.args.get('next'))
+    # print('netx', request.args.get('next'))
     session['user'] = False
     if request.method == 'POST':
         data = request.form
@@ -276,7 +274,7 @@ def login():
                 # print(str(cookie_value))
                 return response
             else:
-                next = urllib.parse.unquote(request.args.get('next')).replace(r.get('server_address'),'')
+                next = urllib.parse.unquote(request.args.get('next')).replace(r.get('server_address'), '')
                 if next:
                     response = make_response(redirect(next))
 
