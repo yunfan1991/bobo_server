@@ -68,9 +68,11 @@ class Easy():
         need_to_convert = []
         for file_name in files:
             file = db.query(Files).filter_by(input=file_name).first()
-            if file is None:
+            if not file:
                 if self.if_need_to_convert(file_name):
                     need_to_convert.append({'input': file_name})
+                else:
+                    need_to_convert.append({'input': file_name, 'is_ok': 1})
         # print(need_to_convert)
         # 写入数据库
         for item_dict in need_to_convert:
@@ -122,18 +124,18 @@ class Easy():
     def convert_to_db_format(self, input):
         base_name = os.path.basename(input)
         # print('base_name', base_name)
-        output = input.replace(os.path.splitext(base_name)[1], '_easy2mp4.com.mp4')
+        output = input.replace(os.path.splitext(base_name)[1], '_wulibobo.com_convert.mp4')
         if input == output:
-            output = input.replace(os.path.splitext(base_name)[1], '_easy2mp4.com_new.mp4')
+            output = input.replace(os.path.splitext(base_name)[1], '_wulibobo.com_convert_new.mp4')
         return {'input': input}
 
     def convert_to_mp4(self, input_name, is_delete=False, code="utf8"):
         file = db.query(Files).filter_by(input=input_name).first()
         base_name = os.path.basename(input_name)
         # print('base_name', base_name)
-        output = input_name.replace(os.path.splitext(base_name)[1], '_easy2mp4.com.mp4')
+        output = input_name.replace(os.path.splitext(base_name)[1], '_wulibobo.com_convert.mp4')
         if input_name == output:
-            output = input_name.replace(os.path.splitext(base_name)[1], '_easy2mp4.com_new.mp4')
+            output = input_name.replace(os.path.splitext(base_name)[1], '_wulibobo.com_convert_new.mp4')
         # print("output", output)
         # return True
         if file.is_fault < 2:
