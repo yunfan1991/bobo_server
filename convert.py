@@ -4,7 +4,7 @@ import schedule
 # start set db
 from sqlalchemy import create_engine
 
-db_name = 'easy2mp4.db'
+db_name = '/data/convert.db'
 db_uri = "sqlite:///" + db_name + "?check_same_thread=False"
 engine = create_engine(db_uri)
 from sqlalchemy.ext.declarative import declarative_base
@@ -67,8 +67,10 @@ class Easy():
         files = self.find_all_videos(work_dir)
         need_to_convert = []
         for file_name in files:
-            if self.if_need_to_convert(file_name):
-                need_to_convert.append({'input': file_name})
+            file = db.query(Files).filter_by(input=file_name).first()
+            if file is None:
+                if self.if_need_to_convert(file_name):
+                    need_to_convert.append({'input': file_name})
         # print(need_to_convert)
         # 写入数据库
         for item_dict in need_to_convert:
@@ -96,6 +98,7 @@ class Easy():
         return temp_file_list
 
     def if_need_to_convert(self, file_address, code="utf8"):
+        #如果库里已经有了，跳过
         cmd = "ffprobe -print_format json -show_format -i '%s'" % file_address
         process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
