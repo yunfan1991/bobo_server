@@ -132,7 +132,6 @@ def urlencode_filter(s):
 
 @app.template_filter('next_episode')
 def next_episode(s):
-    # http://127.0.0.1:8566//study/郦波：语文启蒙七年级上/004第四课.《观沧海》：文如其人、诗如其人的曹操【微信公众号：学富资源吧】【添加微信：xfzyb668】.mp3
     data = ''
     try:
         temp_s = s.split('8567')
@@ -241,6 +240,12 @@ def index():
         print(e)
         # return redirect(url_for('login'))
         return redirect('/login')
+
+
+@app.route('/feedback')
+def feedback():
+    uid = '1cfdabde150c7a9bbe501d9704b79dbf7c947fa8'
+    return render_template('feedback.html', uid=uid)
 
 
 @app.route('/login', methods=['get', 'post'])
