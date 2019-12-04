@@ -113,8 +113,19 @@ def urlencode_filter(s):
                 return server + vtt
             elif os.path.exists(subtitle_name):
                 webvtt.from_srt(subtitle_name).save()
-
                 return server + vtt
+
+    for key in range(6):
+        key = str(key)
+        subtitle_name = media_server + "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[
+            0] + '.' + key + '.srt'
+        vtt = "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[0] + '.' + key + '.vtt'
+        # print('subtitle name', subtitle_name)
+        if os.path.exists(media_server + vtt):
+            return server + vtt
+        elif os.path.exists(subtitle_name):
+            webvtt.from_srt(subtitle_name).save()
+            return server + vtt
 
     return ''
 

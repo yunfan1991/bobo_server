@@ -1,10 +1,15 @@
 import os, subprocess, datetime, time
-import schedule
+import schedule, re
 
 # start set db
 from sqlalchemy import create_engine
 
 db_name = '/data/convert.db'
+# db_name = 'convert.db'
+
+# work_dir = '/Users/lin/Movies'
+work_dir = '/media/'
+
 db_uri = "sqlite:///" + db_name + "?check_same_thread=False"
 engine = create_engine(db_uri)
 from sqlalchemy.ext.declarative import declarative_base
@@ -46,15 +51,14 @@ if not os.path.exists(db_name):
     db.add(work)
     db.commit()
 
-# db set ok
 
-work_dir = '/media/'
+# db set ok
 
 
 class Easy():
     def __init__(self):
-        self.scanning = False
-        self.is_converting = False
+        self.fm = ('flv', 'avi', 'wmv', 'asf', 'wmvhd', 'mpeg', 'dat', 'vob', 'mpg', 'mp4', '3gp',
+                   '3g2', 'mkv', 'm4v', 'rm', 'rmvb', 'mov', 'webm')
 
     def get_need_to_convert(self):
         file_list = db.query(Files).filter_by(is_ok=0)
@@ -88,19 +92,18 @@ class Easy():
                 # print('skip ', item_dict)
 
     def find_all_videos(self, directory):
-        fm = ('flv', 'avi', 'wmv', 'asf', 'wmvhd', 'mpeg', 'dat', 'vob', 'mpg', 'mp4', '3gp',
-              '3g2', 'mkv', 'm4v', 'rm', 'rmvb', 'mov', 'webm')
+
         temp_file_list = []
         for root, dirs, files in os.walk(directory):
             # print(files)
             files = [f for f in files if not f[0] == '.']
             for item in files:
-                if item.lower().endswith(fm):
+                if item.lower().endswith(self.fm):
                     temp_file_list.append(root + '/' + item)
         return temp_file_list
 
     def if_need_to_convert(self, file_address, code="utf8"):
-        #如果库里已经有了，跳过
+        # 如果库里已经有了，跳过
         cmd = "ffprobe -print_format json -show_format -i '%s'" % file_address
         process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
@@ -130,6 +133,15 @@ class Easy():
         return {'input': input}
 
     def convert_to_mp4(self, input_name, is_delete=False, code="utf8"):
+        def format(data):
+            '''将font标签和style标签全部删除'''
+            p = re.compile(r'<font .*?>|</font>|style=\".*?\"')
+            ret = p.sub('', data)
+            if ret != data:
+                return ret
+            else:
+                return None
+
         file = db.query(Files).filter_by(input=input_name).first()
         base_name = os.path.basename(input_name)
         # print('base_name', base_name)
@@ -142,6 +154,16 @@ class Easy():
             try:
                 file.start_time = datetime.datetime.now()
                 db.commit()
+                # 若是mkv，取字幕出来
+                srt_name = ''
+                if input_name.lower().endswith('mkv'):
+                    for i in range(6):
+                        srt_name = input_name + '.' + str(i) + '.ass'
+                        cmd = "ffmpeg -i %s -map 0:s:%s %s" % (input_name, str(i), srt_name)
+                        process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                                   stderr=subprocess.STDOUT)
+
+
                 cmd = "ffmpeg -i '%s' '%s'  -y" % (input_name, output)
                 process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                            stderr=subprocess.STDOUT)
@@ -162,6 +184,17 @@ class Easy():
                                     # 删除源文件
                                     os.remove(input_name)
                                 print('convert ok... ', input_name)
+                                #把字幕转换为srt
+                                if srt_name:
+                                    file_dir = srt_name.replace(srt_name.split('/')[-1],'')
+                                    subprocess.Popen('cd ' + file_dir, shell=True, stdin=subprocess.PIPE,
+                                                               stdout=subprocess.PIPE,
+                                                               stderr=subprocess.STDOUT)
+                                    subprocess.Popen('pysubs2 --to srt *.ass', shell=True, stdin=subprocess.PIPE,
+                                                     stdout=subprocess.PIPE,
+                                                     stderr=subprocess.STDOUT)
+
+
                                 time.sleep(30)
                                 return True
             except Exception as e:
