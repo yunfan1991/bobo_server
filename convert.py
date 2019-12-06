@@ -12,7 +12,7 @@ work_dir = '/media/'
 
 import logging
 
-logging.basicConfig(filename=work_dir + 'mp4_convert.log', level=logging.DEBUG,
+logging.basicConfig(filename=work_dir + 'mp4_convert.log', level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
