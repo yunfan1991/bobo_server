@@ -32,7 +32,7 @@ media_server = '/media'
 #media_server = '/Users/lin/Movies'
 import logging
 
-logging.basicConfig(filename=media_server + '/bobo_server.log', level=logging.DEBUG,
+logging.basicConfig(filename=media_server + '/bobo_server.log', level=logging.info,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
