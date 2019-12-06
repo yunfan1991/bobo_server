@@ -4,7 +4,7 @@ import urllib.parse
 from datetime import timedelta, datetime, time
 import json
 from flask_restful import reqparse, abort, Api, Resource
-import os
+import os, requests
 
 from flask_paginate import Pagination, get_page_args
 from utils import pagenation_replace, get_ip, redirect_back, url_replace_1, url_replace_2
@@ -29,7 +29,12 @@ import webvtt
 
 r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses=True)
 media_server = '/media'
-# media_server = '/Volumes/video'
+#media_server = '/Users/lin/Movies'
+import logging
+
+logging.basicConfig(filename=media_server + '/bobo_server.log', level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 api = Api(app)
@@ -82,7 +87,7 @@ def urlencode_filter(s):
     movie_address = s
     temp_s = s.split('8567')
     server = temp_s[0] + '8567'
-    # print('next address1:',temp_s)
+    # logging.info('next address1:',temp_s)
     movie_address = temp_s[-1]
     movie_address = movie_address.replace('//', '/')
     movie_address = movie_address.split('/')
@@ -94,7 +99,7 @@ def urlencode_filter(s):
         subtitle_name = media_server + "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[
             0] + '.' + key + '.srt'
         vtt = "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[0] + '.' + key + '.vtt'
-        # print('subtitle name', subtitle_name)
+        # logging.info('subtitle name', subtitle_name)
         if key == r.get('language'):
             if os.path.exists(media_server + vtt):
                 current_language = True
@@ -108,7 +113,7 @@ def urlencode_filter(s):
             subtitle_name = media_server + "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[
                 0] + '.' + key + '.srt'
             vtt = "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[0] + '.' + key + '.vtt'
-            # print('subtitle name', subtitle_name)
+            # logging.info('subtitle name', subtitle_name)
             if os.path.exists(media_server + vtt):
                 return server + vtt
             elif os.path.exists(subtitle_name):
@@ -120,12 +125,21 @@ def urlencode_filter(s):
         subtitle_name = media_server + "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[
             0] + '.' + key + '.srt'
         vtt = "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[0] + '.' + key + '.vtt'
-        # print('subtitle name', subtitle_name)
+        # logging.info('subtitle name', subtitle_name)
         if os.path.exists(media_server + vtt):
             return server + vtt
         elif os.path.exists(subtitle_name):
             webvtt.from_srt(subtitle_name).save()
             return server + vtt
+    subtitle_name = media_server + "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[
+        0] + '.srt'
+    vtt = "/".join(movie_address[0:-1]) + '/' + os.path.splitext(base)[0] + '.vtt'
+    # logging.info('subtitle name', subtitle_name)
+    if os.path.exists(media_server + vtt):
+        return server + vtt
+    elif os.path.exists(subtitle_name):
+        webvtt.from_srt(subtitle_name).save()
+        return server + vtt
 
     return ''
 
@@ -135,16 +149,16 @@ def next_episode(s):
     data = ''
     try:
         temp_s = s.split('8567')
-        # print('next address1:',temp_s)
+        # logging.info('next address1:',temp_s)
         movie_address = temp_s[-1]
 
         movie_address = movie_address.replace('//', '/')
 
         movie_address = movie_address.split('/')
         file_name = movie_address[-1]
-        # print('next address movie_address:', movie_address)
+        # logging.info('next address movie_address:', movie_address)
         dir_name = ":".join(movie_address[0:-1])
-        # print('next address dir name',dir_name)
+        # logging.info('next address dir name',dir_name)
         files_new = r.get('media_server' + dir_name + ':files')
         files = json.loads(files_new)
         files = sorted(files, key=lambda x: (x[1]))
@@ -156,7 +170,7 @@ def next_episode(s):
                 data = session['web_server'] + 'play?movie_address=' + dir_name.replace(':', '/') + '/' + data + '$_$' + \
                        files[i][2] + '$_$' + session['host_ip']
                 # data = quote(data)
-                # print('next address', data)
+                # logging.info('next address', data)
                 break
     except:
         pass
@@ -229,7 +243,7 @@ def index():
     try:
         is_cookie = check_cookie()
         if is_cookie:
-            # print('index from cookie')
+            # logging.info('index from cookie')
             session['host_ip'] = is_cookie[0]
         # _thread.start_new_thread(get_available_ip, (1 , 2))
         return redirect('/f')
@@ -237,7 +251,7 @@ def index():
         # return render_template('index.html', movies=movies, server=server)
 
     except Exception as e:
-        print(e)
+        logging.info(e)
         # return redirect(url_for('login'))
         return redirect('/login')
 
@@ -252,12 +266,12 @@ def feedback():
 def login():
     data = {}
     study = False
-    # print('netx', request.args.get('next'))
+    # logging.info('netx', request.args.get('next'))
     session['user'] = False
     if request.method == 'POST':
         data = request.form
-        # #print(data['pin_code'])
-        # #print(settings_obj.normal_pin)
+        # #logging.info(data['pin_code'])
+        # #logging.info(settings_obj.normal_pin)
         try:
             language = data['set_language']
             if language:
@@ -277,17 +291,17 @@ def login():
         if normal:
             session['user'] = 'normal'
         if pd:
-            # print('getting user')
+            # logging.info('getting user')
             session['host_ip'] = r.get('media_server')
             session['web_server'] = r.get('server_address')
 
             check_box = data['check_box']
             if str(check_box) == 'on':
-                # print('to set cookies...')
+                # logging.info('to set cookies...')
                 cookie_value = create_cookie(data['pin_code'])
                 response = make_response(redirect(url_for('index')))
                 response.set_cookie(app.config['COOKIE_NAME'], cookie_value)
-                # print(str(cookie_value))
+                # logging.info(str(cookie_value))
                 return response
             else:
                 next = urllib.parse.unquote(request.args.get('next')).replace(r.get('server_address'), '')
@@ -338,11 +352,11 @@ def login_init():
 
         else:
             data = request.form
-            # #print(str(data.to_dict()))
+            # #logging.info(str(data.to_dict()))
             data = data.to_dict()
             data['api_key'] = get_api()
 
-            # print(data)
+            # logging.info(data)
             '''
             {'language': 'Chinese', 'server_address': 'http://127.0.0.1:5000', 'media_server': 'http://127.0.0.1:5000', 'normal_pin': '9999', 'study_pin': '1234', 'q_a': 'Alpha', 'api_key': 'e4b93eb4-0915-11ea-98cf-8c859072f2dc'}
             '''
@@ -367,11 +381,27 @@ def login_init():
     return render_template('login_init.html', **templateData)
 
 
+@app.route('/code')
+@login_required
+def invite_code():
+    api_key = get_api()
+    url = 'http://www.wulibobo.com/invite_code?api_key=' + api_key
+    c = requests.get(url)
+    code = c.text
+    templateData = {
+        'title': 'Invite code',
+        'code': code,
+        # 'api_key': api_key,
+        # 'pagenation_replace': utils.pagenation_replace
+    }
+    return render_template('invite_code.html', **templateData)
+
+
 @app.route('/login_by_scan', methods=['get'])
 def login_by_scan():
     if request.method == 'GET':
         data = request.args.to_dict()
-        print(data)
+        logging.info(data)
         # if check_box on,使用cookies记录
         # return data
         # data = {}
@@ -391,13 +421,13 @@ def login_by_scan():
         if normal:
             session['user'] = 'normal'
         if pd:
-            # print('getting user')
+            # logging.info('getting user')
             session['host_ip'] = r.get('media_server')
             session['web_server'] = r.get('server_address')
             cookie_value = create_cookie(data['pin_code'])
             response = make_response(redirect(url_for('index')))
             response.set_cookie(app.config['COOKIE_NAME'], cookie_value)
-            # print(str(cookie_value))
+            # logging.info(str(cookie_value))
             return response
         else:
             flash(_('Authentication failed'))
@@ -416,6 +446,8 @@ def logout():
     return response
 
 
+
+
 class movie_list(Resource):
     def post(self):
         # args = parser.parse_args()
@@ -423,7 +455,7 @@ class movie_list(Resource):
         api_ip = request.json
         data = api_ip['data']
         files_acton = data[-1]
-        # #print(data)
+        # #logging.info(data)
         api_key = api_ip['api_key']
         host_ip = api_ip['host_ip']
 
@@ -432,8 +464,8 @@ class movie_list(Resource):
         # 1 api_key, host_ip 写入用户表
         # 普通电影列表
         s = data[0]
-        # print(len(s))
-        # print(files_acton)
+        # logging.info(len(s))
+        # logging.info(files_acton)
         op = Add_movies(user_id, s, files_acton)
 
         '''
@@ -458,7 +490,7 @@ api.add_resource(movie_list, '/v1/movie_list')
 @login_required
 def update_system():
     try:
-        print('exec cd /home/bobo_server')
+        logging.info('exec cd /home/bobo_server')
         os.popen('cd /home/bobo_server')
         output2 = os.popen('git pull')
         return output2.read()
@@ -487,10 +519,10 @@ def all():
         for d in data_new[::-1]:
             if 'secret-' not in d:
                 for item in json.loads(r.get(d)):
-                    ##print(item)
+                    ##logging.info(item)
                     List.append(item)
         List = sorted(List, key=lambda x: (x[-1]), reverse=True)
-        # print(List)
+        # logging.info(List)
         # List.sort(lambda x, y: cmp(x[3], y[3]), reverse=True)
         i = (page - 1) * per_page
         List1 = List[i:i + 60]
@@ -528,7 +560,7 @@ def m_dir():
     dir_name = ':'.join(request.args.get('dir').split('$_$'))
     # return jsonify(test)
     # for dir_name in dir_list:
-    print('dir_name', dir_name)
+    logging.info('dir_name', dir_name)
     Files = []
     if dir_name == 'movie' or dir_name == 'cartoon':
         data_new = r.keys(pattern='media_server:' + dir_name + '*:files')
@@ -538,14 +570,14 @@ def m_dir():
         is_dir = True
 
         files_new = r.keys(pattern='media_server:' + dir_name + ':files')
-        # print('本目录下有文件：', files_new)
+        # logging.info('本目录下有文件：', files_new)
         for d in files_new[::-1]:
             if 'secret-' not in d:
                 for item in json.loads(r.get(d)):
-                    # #print(item)
+                    # #logging.info(item)
                     Files.append(item)
         Files = sorted(Files, key=lambda x: (x[1]))
-        # print('files',Files)
+        # logging.info('files',Files)
 
     # data_new = r.keys(pattern='media_server:' + '*' + dir_name + ':dirs')
 
@@ -557,10 +589,10 @@ def m_dir():
     for d in data_new[::-1]:
         if 'secret-' not in d:
             for item in json.loads(r.get(d)):
-                # #print(item)
+                # #logging.info(item)
                 List.append(item)
     List = sorted(List, key=lambda x: (x[-1]), reverse=True)
-    # print(List)
+    # logging.info(List)
     # List.sort(lambda x, y: cmp(x[3], y[3]), reverse=True)
     i = (page - 1) * per_page
     List1 = List[i:i + 40]
@@ -597,7 +629,7 @@ def search():
     dir_name = request.args.get('q')
     # return jsonify(test)
     # for dir_name in dir_list:
-    # print('dir_name', dir_name)
+    # logging.info('dir_name', dir_name)
     Files = []
 
     if session['user'] == 'study':
@@ -608,14 +640,14 @@ def search():
         data_new = r.keys(pattern='media_server:*' + dir_name + '*:dirs')
         is_dir = True
         files_new = r.keys(pattern='media_server:*' + dir_name + '*:files')
-        # print('本目录下有文件：', files_new)
+        # logging.info('本目录下有文件：', files_new)
     for d in files_new[::-1]:
         if 'secret-' not in d:
             for item in json.loads(r.get(d)):
-                # #print(item)
+                # #logging.info(item)
                 Files.append(item)
     Files = sorted(Files, key=lambda x: (x[1]))
-    # print('files',Files)
+    # logging.info('files',Files)
 
     # data_new = r.keys(pattern='media_server:' + '*' + dir_name + ':dirs')
 
@@ -627,10 +659,10 @@ def search():
     for d in data_new[::-1]:
         if 'secret-' not in d:
             for item in json.loads(r.get(d)):
-                # #print(item)
+                # #logging.info(item)
                 List.append(item)
     List = sorted(List, key=lambda x: (x[-1]), reverse=True)
-    # print(List)
+    # logging.info(List)
     # List.sort(lambda x, y: cmp(x[3], y[3]), reverse=True)
     i = (page - 1) * per_page
     List1 = List[i:i + 40]
@@ -658,8 +690,8 @@ def search():
 # @login_required
 def favorite_add():
     item = request.args.get('item')
-    # print('收藏的args', request.args.to_dict())
-    # print('收藏的item', item.split(','))
+    # logging.info('收藏的args', request.args.to_dict())
+    # logging.info('收藏的item', item.split(','))
     if json.dumps(item) not in r.lrange(session['user'] + ':favorite', 0, -1):
         r.rpush(session['user'] + ':favorite', json.dumps(item))
         flash(_('Success'))
@@ -700,7 +732,7 @@ def favorite():
     for item in temp_list:
         List.append(json.loads(item).split(','))
     # List = sorted(List, key=lambda x: (x[-1]), reverse=True)
-    print('List', List)
+    logging.info('List', List)
     List.reverse()
     # List.sort(lambda x, y: cmp(x[3], y[3]), reverse=True)
     i = (page - 1) * per_page
@@ -729,7 +761,7 @@ def favorite():
 @app.route('/play', methods=['get', 'post'])
 # @login_required
 def play():
-    # print(request.args)
+    # logging.info(request.args)
     movie_address = request.args['movie_address']
     if '$_$' in movie_address:
         temp_list = movie_address.split('$_$')
@@ -759,9 +791,9 @@ def play():
 @app.route('/v1/get_movies', methods=['POST'])
 def get_movies():
     data = request.form.getlist('data')
-    # print(data)
+    # logging.info(data)
     # json_data = json.loads(data.decode("utf-8"))
-    # #print(json_data)
+    # #logging.info(json_data)
 
     return "success!"
 

@@ -10,6 +10,12 @@ db_name = '/data/convert.db'
 # work_dir = '/Users/lin/Movies'
 work_dir = '/media/'
 
+import logging
+
+logging.basicConfig(filename=work_dir + 'mp4_convert.log', level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 db_uri = "sqlite:///" + db_name + "?check_same_thread=False"
 engine = create_engine(db_uri)
 from sqlalchemy.ext.declarative import declarative_base
@@ -44,7 +50,7 @@ class Work(Base):
 Session = sessionmaker(bind=engine)
 db = Session()
 
-# print('is db?',os.path.exists(db_name))
+# logging.info('is db?',os.path.exists(db_name))
 if not os.path.exists(db_name):
     Base.metadata.create_all(engine)
     work = Work(is_scan=0, is_convert=0)
@@ -77,7 +83,7 @@ class Easy():
                     need_to_convert.append({'input': file_name})
                 else:
                     need_to_convert.append({'input': file_name, 'is_ok': 1})
-        # print(need_to_convert)
+        # logging.info(need_to_convert)
         # 写入数据库
         for item_dict in need_to_convert:
             # item is a dictionary
@@ -86,16 +92,16 @@ class Easy():
                 add_file = Files(**item_dict)
                 db.add(add_file)
                 db.commit()
-                # print(item_dict['input'], ' add ok!')
+                # logging.info(item_dict['input'], ' add ok!')
             else:
                 pass
-                # print('skip ', item_dict)
+                # logging.info('skip ', item_dict)
 
     def find_all_videos(self, directory):
 
         temp_file_list = []
         for root, dirs, files in os.walk(directory):
-            # print(files)
+            # logging.info(files)
             files = [f for f in files if not f[0] == '.']
             for item in files:
                 if item.lower().endswith(self.fm):
@@ -104,7 +110,9 @@ class Easy():
 
     def if_need_to_convert(self, file_address, code="utf8"):
         # 如果库里已经有了，跳过
-        cmd = "ffprobe -print_format json -show_format -i '%s'" % file_address
+        cmd = "ffprobe -logging.info_format json -show_format -i '%s'" % file_address
+        if "'" in file_address:
+            cmd = 'ffprobe -logging.info_format json -show_format -i "%s" ' % file_address
         process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
         while process.poll() is None:
@@ -112,21 +120,21 @@ class Easy():
             line = line.strip()
             if line:
                 out_info = line.decode(code, 'ignore')
-                # print(out_info)
+                # logging.info(out_info)
                 if out_info:
                     if '"format_name"' in out_info:
                         temp = out_info.split(':')[-1].strip()
-                        # print('temp', temp)
+                        # logging.info('temp', temp)
                         if 'mp4' in temp:
                             return False
         return True
 
     def get_media_info(self, file_address):
-        self.__external_cmd("ffprobe -print_format json -show_format -i '%s'" % file_address)
+        self.__external_cmd("ffprobe -logging.info_format json -show_format -i '%s'" % file_address)
 
     def convert_to_db_format(self, input):
         base_name = os.path.basename(input)
-        # print('base_name', base_name)
+        # logging.info('base_name', base_name)
         output = input.replace(os.path.splitext(base_name)[1], '_wulibobo.com_convert.mp4')
         if input == output:
             output = input.replace(os.path.splitext(base_name)[1], '_wulibobo.com_convert_new.mp4')
@@ -144,14 +152,15 @@ class Easy():
 
         file = db.query(Files).filter_by(input=input_name).first()
         base_name = os.path.basename(input_name)
-        # print('base_name', base_name)
+        # logging.info('base_name', base_name)
         output = input_name.replace(os.path.splitext(base_name)[1], '_wulibobo.com_convert.mp4')
         if input_name == output:
             output = input_name.replace(os.path.splitext(base_name)[1], '_wulibobo.com_convert_new.mp4')
-        # print("output", output)
+        # logging.info("output", output)
         # return True
         if file.is_fault < 2:
             try:
+                logging.warning('{star convert} %s' % input_name)
                 file.start_time = datetime.datetime.now()
                 db.commit()
                 # 若是mkv，取字幕出来
@@ -163,8 +172,9 @@ class Easy():
                         process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                                    stderr=subprocess.STDOUT)
 
-
                 cmd = "ffmpeg -i '%s' '%s'  -y" % (input_name, output)
+                if "'" in input_name:
+                    cmd = 'ffmpeg -i "%s" "%s"  -y' % (input_name, output)
                 process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                            stderr=subprocess.STDOUT)
                 while process.poll() is None:
@@ -173,7 +183,7 @@ class Easy():
                     if line:
                         out_info = line.decode(code, 'ignore')
                         if out_info:
-                            # print(out_info)
+                            # logging.info(out_info)
                             if 'Qavg:' in out_info:
                                 # 转换成功状态写入数据
                                 file.end_time = datetime.datetime.now()
@@ -183,18 +193,18 @@ class Easy():
                                 if is_delete:
                                     # 删除源文件
                                     os.remove(input_name)
-                                print('convert ok... ', input_name)
-                                #把字幕转换为srt
+                                logging.info('convert ok... ', input_name)
+                                # 把字幕转换为srt
                                 if srt_name:
-                                    file_dir = srt_name.replace(srt_name.split('/')[-1],'')
+                                    file_dir = srt_name.replace(srt_name.split('/')[-1], '')
                                     subprocess.Popen('cd ' + file_dir, shell=True, stdin=subprocess.PIPE,
-                                                               stdout=subprocess.PIPE,
-                                                               stderr=subprocess.STDOUT)
+                                                     stdout=subprocess.PIPE,
+                                                     stderr=subprocess.STDOUT)
                                     subprocess.Popen('pysubs2 --to srt *.ass', shell=True, stdin=subprocess.PIPE,
                                                      stdout=subprocess.PIPE,
                                                      stderr=subprocess.STDOUT)
 
-
+                                logging.warning('{end convert} %s' % input_name)
                                 time.sleep(30)
                                 return True
             except Exception as e:
@@ -206,7 +216,7 @@ class Easy():
 
     @staticmethod
     def __external_cmd(cmd, code="utf8"):
-        print(cmd)
+        logging.info(cmd)
         process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
         while process.poll() is None:
@@ -216,16 +226,16 @@ class Easy():
 
                 out_info = line.decode(code, 'ignore')
                 if ' time' in out_info:
-                    print('注意，开始转换了', out_info)
+                    logging.info('注意，开始转换了', out_info)
                 else:
-                    print(out_info)
+                    logging.info(out_info)
 
     def walk_sub_dir(self, directory):
         pass
 
 
 def job_scan(temp_dir=None):
-    print("I'm scanning...")
+    logging.info("{scna start}")
     if not temp_dir:
         temp_dir = work_dir
     easy = Easy()
@@ -236,16 +246,17 @@ def job_scan(temp_dir=None):
         db.commit()
         try:
             easy.scan_to_db(temp_dir)
-            print('scan finish')
+            logging.info('scan finish')
             work_obj.is_scan = 0
             db.commit()
         except:
             work_obj.is_scan = 0
             db.commit()
+    logging.info("[scna ended]")
 
 
 def job_convert():
-    print("I'm converting...")
+    logging.info("I'm converting...")
     work_obj = db.query(Work).filter_by(id=1).first()
     easy = Easy()
     if work_obj.is_convert == 0:
@@ -255,9 +266,9 @@ def job_convert():
                 work_obj.is_convert = 1
                 db.commit()
                 for item in files:
-                    print('start to convert... ', item.input)
+                    logging.info('start to convert... ', item.input)
                     easy.convert_to_mp4(item.input, is_delete=True)
-                print('convert finish')
+                logging.info('convert finish')
                 work_obj.is_convert = 0
                 db.commit()
             except:
@@ -274,38 +285,40 @@ class FileEventHandler(FileSystemEventHandler):
                     temp_dir = event.src_path
                     time.sleep(1)
                     if temp_dir:
-                        print('目录改动', temp_dir)
+                        logging.info('目录改动', temp_dir)
                         # time.sleep()
                         job_scan(temp_dir)
 
 
 if __name__ == '__main__':
-    work_obj = db.query(Work).filter_by(id=1).first()
-    work_obj.is_scan = 0
-    work_obj.is_convert = 0
-    db.commit()
-    # schedule.every().day.at("01:30").do(job_scan)
-    schedule.every().day.at("01:00").do(job_convert)
-    job_scan()
-    time.sleep(6)
-    job_convert()
+    # 加一个判断，根目录有无需转换的，不转换
+    if not os.path.exists(work_dir + 'noconvert.txt'):
+        work_obj = db.query(Work).filter_by(id=1).first()
+        work_obj.is_scan = 0
+        work_obj.is_convert = 0
+        db.commit()
+        # schedule.every().day.at("01:30").do(job_scan)
+        schedule.every().day.at("01:00").do(job_convert)
+        job_scan()
+        time.sleep(6)
+        job_convert()
 
-    # schedule.every(10).minutes.do(job)
-    # schedule.every().monday.do(job)
-    # schedule.every().wednesday.at("13:15").do(job)
+        # schedule.every(10).minutes.do(job)
+        # schedule.every().monday.do(job)
+        # schedule.every().wednesday.at("13:15").do(job)
 
-    while True:
-        schedule.run_pending()
-        time.sleep(10)
+        while True:
+            schedule.run_pending()
+            time.sleep(10)
 
-        observer = Observer()
-        event_handler = FileEventHandler()
-        observer.schedule(event_handler, work_dir, recursive=True)
-        observer.start()
-        print('observer started at ', work_dir, datetime.datetime.now())
-        try:
-            while True:
-                time.sleep(60)
-        except KeyboardInterrupt:
-            observer.stop()
-        observer.join()
+            observer = Observer()
+            event_handler = FileEventHandler()
+            observer.schedule(event_handler, work_dir, recursive=True)
+            observer.start()
+            # logging.info('observer started at ', work_dir, datetime.datetime.now())
+            try:
+                while True:
+                    time.sleep(60)
+            except KeyboardInterrupt:
+                observer.stop()
+            observer.join()

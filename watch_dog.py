@@ -208,7 +208,7 @@ if __name__ == "__main__":
         # 创建初始目录
         try:
             for item in dirs:
-                temp_dir = web_server_dir + "/" + dirs
+                temp_dir = web_server_dir + "/" + item
                 if not os.path.exists(temp_dir):
                     os.makedirs(temp_dir)
         except:
