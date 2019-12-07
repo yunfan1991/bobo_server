@@ -51,6 +51,10 @@ MTV mtv
 
 运行 docker start bobo_server
 
+重启 docker restart bobo_server
+
+删除 docker rm bobo_server
+
 ### 五、浏览器操作 
 
 成功运行后，打开浏览器，
@@ -65,7 +69,7 @@ MTV mtv
 
 ### 六、字幕支持
 
-bobo_server 当前仅支持.srt格式字幕，请将字幕格式设置为 文件名.en.srt(英文字幕) 或 文件名.chs.srt(中文字幕)
+bobo_server 当前仅支持.srt格式字幕，请将字幕格式设置为 文件名.en.srt(英文字幕) 或 文件名.zh.srt(中文字幕)
 
 ### **** For English ***
 
