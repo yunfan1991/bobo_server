@@ -64,7 +64,7 @@ if not os.path.exists(db_name):
 class Easy():
     def __init__(self):
         self.fm = ('flv', 'avi', 'wmv', 'asf', 'wmvhd', 'mpeg', 'dat', 'vob', 'mpg', 'mp4', '3gp',
-                   '3g2', 'mkv', 'm4v', 'rm', 'rmvb', 'mov', 'webm')
+                   '3g2', 'm4v', 'rm', 'rmvb', 'mov', 'webm')
 
     def get_need_to_convert(self):
         file_list = db.query(Files).filter_by(is_ok=0)
@@ -109,10 +109,9 @@ class Easy():
         return temp_file_list
 
     def if_need_to_convert(self, file_address, code="utf8"):
-        # 如果库里已经有了，跳过
-        cmd = "ffprobe -logging.info_format json -show_format -i '%s'" % file_address
+        cmd = "ffprobe -print_format json -show_format -i '%s'" % file_address
         if "'" in file_address:
-            cmd = 'ffprobe -logging.info_format json -show_format -i "%s" ' % file_address
+            cmd = 'ffprobe -print_format json -show_format -i "%s" ' % file_address
         process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
         while process.poll() is None:
@@ -130,7 +129,7 @@ class Easy():
         return True
 
     def get_media_info(self, file_address):
-        self.__external_cmd("ffprobe -logging.info_format json -show_format -i '%s'" % file_address)
+        self.__external_cmd("ffprobe -print_format json -show_format -i '%s'" % file_address)
 
     def convert_to_db_format(self, input):
         base_name = os.path.basename(input)
@@ -168,7 +167,9 @@ class Easy():
                 if input_name.lower().endswith('mkv'):
                     for i in range(6):
                         srt_name = input_name + '.' + str(i) + '.ass'
-                        cmd = "ffmpeg -i %s -map 0:s:%s %s" % (input_name, str(i), srt_name)
+                        cmd = "ffmpeg -i '%s' -map 0:s:%s '%s'" % (input_name, str(i), srt_name)
+                        if "'" in input_name:
+                            cmd ='ffmpeg -i "%s" -map 0:s:%s "%s"' % (input_name, str(i), srt_name)
                         process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                                    stderr=subprocess.STDOUT)
 
