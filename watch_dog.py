@@ -227,7 +227,7 @@ if __name__ == "__main__":
     event_handler = FileEventHandler()
     observer.schedule(event_handler, web_server_dir, recursive=True)
     observer.start()
-    logging.info('observer started at ', web_server_dir, datetime.datetime.now())
+    #logging.info('observer started at %s' % web_server_dir)
     try:
         while True:
             time.sleep(60)
