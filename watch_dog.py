@@ -14,10 +14,9 @@ dirs = ['movie', 'tv', 'cartoon', 'mtv', 'show', 'special', 'study', 'doc', 'aud
 
 import logging
 
-logging.basicConfig(filename=web_server_dir + '/watchdog.log', level=logging.INFO,
+logging.basicConfig(filename=web_server_dir + '/watchdog.log', level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-
 
 try:
     with open('api_server.txt', 'r') as f:
@@ -169,65 +168,36 @@ class FileEventHandler(FileSystemEventHandler):
 
     def on_moved(self, event):
         if os.path.isdir(event.src_path):
-            # 删除被删除的文件的keys
-            # logging.info('删除被删除的文件的目录', event.src_path )
             self.update(event.src_path, 'del')
 
-        '''
-    def on_any_event(self, event):
-        logging.info('on_any_event', event.src_path)
-        self.update()
-        
-
-    def on_moved(self, event):
-        if os.path.isdir(event.src_path):
-            #删除被删除的文件的keys
-        
-            self.update(event.src_path)
-
-        if os.path.isdir(event.dest_path):
-            self.update(event.dest_path)
-
-    def on_created(self, event):
-        if os.path.isdir(event.src_path):
-            self.update(event.src_path)
-
-    def on_deleted(self, event):
-        if os.path.isdir(event.src_path):
-            self.update(event.src_path)
-        '''
-
     def on_modified(self, event):
-
-        if not '.DS_Store' in str(event.src_path):
-            if os.path.isdir(event.src_path):
-                if str(event.src_path) != web_server_dir:
-                    temp_dir = event.src_path
-                    time.sleep(1)
-                    if temp_dir:
-                        logging.info('目录改动', temp_dir)
-                        self.update(temp_dir)
+        if os.path.isdir(event.src_path):
+            if str(event.src_path) != web_server_dir:
+                temp_dir = event.src_path
+                time.sleep(1)
+                if temp_dir:
+                    logging.info('category changed %s' % temp_dir)
+                    self.update(temp_dir)
 
 
 if __name__ == "__main__":
-    if not r.get('is_init'):
-        logging.info('未初始化，开始全盘扫描')
-        # 创建初始目录
-        try:
-            for item in dirs:
-                temp_dir = web_server_dir + "/" + item
-                if not os.path.exists(temp_dir):
-                    os.makedirs(temp_dir)
-        except:
-            pass
-        bobo_server = bobo_server_main()
-        bobo_server.scan(web_server_dir)
-        time.sleep(120)
+    logging.info('Initialing，scan all categories')
+    # 创建初始目录
+    try:
+        for item in dirs:
+            temp_dir = web_server_dir + "/" + item
+            if not os.path.exists(temp_dir):
+                os.makedirs(temp_dir)
+    except:
+        pass
+    bobo_server = bobo_server_main()
+    bobo_server.scan(web_server_dir)
+    time.sleep(10)
     observer = Observer()
     event_handler = FileEventHandler()
     observer.schedule(event_handler, web_server_dir, recursive=True)
     observer.start()
-    #logging.info('observer started at %s' % web_server_dir)
+    logging.info('observer started on %s' % web_server_dir)
     try:
         while True:
             time.sleep(60)

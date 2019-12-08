@@ -32,7 +32,7 @@ media_server = '/media'
 #media_server = '/Users/lin/Movies'
 import logging
 
-logging.basicConfig(filename=media_server + '/bobo_server.log', level=logging.INFO,
+logging.basicConfig(filename=media_server + '/bobo_server.log', level=logging.WARNING,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -511,6 +511,7 @@ def all():
         page, per_page, offset = get_page_args()
         per_page = 60
         data_new = r.keys(pattern='media_server:' + '*:files')
+        #data_new = r.scan(0, 'media_server:' + '*:files', 100)
         try:
             page = int(request.args.get('page', 1))
         except ValueError:
@@ -560,7 +561,7 @@ def m_dir():
     dir_name = ':'.join(request.args.get('dir').split('$_$'))
     # return jsonify(test)
     # for dir_name in dir_list:
-    logging.info('dir_name', dir_name)
+    #logging.info('dir_name', dir_name)
     Files = []
     if dir_name == 'movie' or dir_name == 'cartoon':
         data_new = r.keys(pattern='media_server:' + dir_name + '*:files')
@@ -799,4 +800,5 @@ def get_movies():
 
 
 if __name__ == '__main__':
+    logging.warning('bobo_server start')
     app.run()
