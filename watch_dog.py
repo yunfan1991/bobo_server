@@ -14,7 +14,7 @@ dirs = ['movie', 'tv', 'cartoon', 'mtv', 'show', 'special', 'study', 'doc', 'aud
 
 import logging
 
-logging.basicConfig(filename=web_server_dir + '/watchdog.log', level=logging.DEBUG,
+logging.basicConfig(filename=web_server_dir + '/watchdog.log', level=logging.WARNING,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -176,12 +176,30 @@ class FileEventHandler(FileSystemEventHandler):
                 temp_dir = event.src_path
                 time.sleep(1)
                 if temp_dir:
-                    logging.info('category changed %s' % temp_dir)
+                    logging.warning('category changed %s' % temp_dir)
                     self.update(temp_dir)
 
 
+def dir_change(dir_path):
+    import os, time
+    path_to_watch = dir_path
+    before = dict([(f, None) for f in os.listdir(path_to_watch)])
+    while 1:
+        time.sleep(10)
+        after = dict([(f, None) for f in os.listdir(path_to_watch)])
+        added = [f for f in after if not f in before]
+        removed = [f for f in before if not f in after]
+        if added:
+            pass
+            #scan
+        if removed:
+            pass
+            # scan3
+        before = after
+
+
 if __name__ == "__main__":
-    logging.info('Initialing，scan all categories')
+    logging.warning('Initialing，scan all categories')
     # 创建初始目录
     try:
         for item in dirs:
@@ -192,15 +210,15 @@ if __name__ == "__main__":
         pass
     bobo_server = bobo_server_main()
     bobo_server.scan(web_server_dir)
-    time.sleep(10)
+    logging.warning('scan all categories done')
     observer = Observer()
     event_handler = FileEventHandler()
     observer.schedule(event_handler, web_server_dir, recursive=True)
     observer.start()
-    logging.info('observer started on %s' % web_server_dir)
+    logging.warning('observer started on %s' % web_server_dir)
     try:
         while True:
-            time.sleep(60)
+            time.sleep(1)
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
