@@ -694,7 +694,7 @@ def favorite_add():
     # logging.info('收藏的item', item.split(','))
     if json.dumps(item) not in r.lrange(session['user'] + ':favorite', 0, -1):
         r.rpush(session['user'] + ':favorite', json.dumps(item))
-        flash(_('Success'))
+        flash(_('Add Success'))
     else:
         flash(_("It's been collected before!"))
     return redirect('/favorite')

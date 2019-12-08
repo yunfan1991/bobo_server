@@ -12,6 +12,13 @@ r = redis.Redis(host='127.0.0.1', port=6379, password='', db=0, decode_responses
 web_server_dir = '/media'
 dirs = ['movie', 'tv', 'cartoon', 'mtv', 'show', 'special', 'study', 'doc', 'audio']
 
+import logging
+
+logging.basicConfig(filename=web_server_dir + '/watchdog.log', level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+
 try:
     with open('api_server.txt', 'r') as f:
         api_server = f.read()
@@ -53,7 +60,7 @@ class bobo_server_main():
                 dir_1 = sub_dirs
                 break
             i = i + 1
-        # print('根目录', dir_1)
+        # logging.info('根目录', dir_1)
         r.set('media_server:root_dir', json.dumps(dir_1))
         # 遍历一级目录下的目录与文件
         for item in dir_1:
@@ -72,15 +79,15 @@ class bobo_server_main():
                 dirs = [f for f in dirs if not f[0] == '.']
                 files = [f for f in files if not f[0] == '.']
                 if files and '.DS_Store' not in files and '@eaDir' not in files:
-                    # print('root', root.replace(walk_path + '/',''))
-                    # print('key', root.replace(directory+'/','').replace('/',':')+':files')
+                    # logging.info('root', root.replace(walk_path + '/',''))
+                    # logging.info('key', root.replace(directory+'/','').replace('/',':')+':files')
                     temp_file_list = []
                     for temp_file in files:
                         if temp_file.split('.')[-1].lower() not in fm:
                             pass
                         # 配上文件属性
                         else:
-                            # print(root + '/' + temp_file)
+                            # logging.info(root + '/' + temp_file)
                             if os.path.exists(root + '/' + temp_file):
                                 file_size = round(os.path.getsize(root + '/' + temp_file) / (1024 * 1024 * 1024), 2)
                                 md5_name = temp_file
@@ -91,15 +98,15 @@ class bobo_server_main():
                                 temp_file_list.append(file_t)
                     r.set('media_server:' + root.replace(directory + '/', '').replace('/', ':') + ':files',
                           json.dumps(temp_file_list))
-                    # print(temp_file_list)
-                # print('$$$$$$$$$')
+                    # logging.info(temp_file_list)
+                # logging.info('$$$$$$$$$')
                 dir_temp = []
                 if dirs:
                     if '@eaDir' in dirs:
                         dirs.remove('@eaDir')
                     for d in dirs:
                         d_t = [d, int(os.path.getmtime(root + '/' + d))]
-                        # print('d_t',d_t)
+                        # logging.info('d_t',d_t)
                         dir_temp.append(d_t)
                     r.set('media_server:' + root.replace(directory + '/', '').replace('/', ':') + ':dirs',
                           json.dumps(dir_temp))
@@ -113,15 +120,15 @@ class bobo_server_main():
             dirs = [f for f in dirs if not f[0] == '.']
             files = [f for f in files if not f[0] == '.']
             if files and '.DS_Store' not in files and '@eaDir' not in files:
-                # print('root', root.replace(walk_path + '/',''))
-                # print('key', root.replace(directory+'/','').replace('/',':')+':files')
+                # logging.info('root', root.replace(walk_path + '/',''))
+                # logging.info('key', root.replace(directory+'/','').replace('/',':')+':files')
                 temp_file_list = []
                 for temp_file in files:
                     if temp_file.split('.')[-1].lower() not in fm:
                         pass
                     # 配上文件属性
                     else:
-                        # print(root + '/' + temp_file)
+                        # logging.info(root + '/' + temp_file)
                         file_size = round(os.path.getsize(root + '/' + temp_file) / (1024 * 1024 * 1024), 2)
                         md5_name = temp_file
                         uid = hashlib.md5(md5_name.encode()).hexdigest()  # 放在服务器生成uuid
@@ -129,19 +136,19 @@ class bobo_server_main():
                         file_t = [root.replace(web_server_dir, '') + '/', temp_file, uid, file_size, int(file_c_time)]
                         temp_file_list.append(file_t)
                 files_key = 'media_server:' + root.replace(web_server_dir + '/', '').replace('/', ':') + ':files'
-                # print('files key',directory,files_key)
+                # logging.info('files key',directory,files_key)
                 r.set(files_key, json.dumps(temp_file_list))
-                # print(temp_file_list)
-            # print('$$$$$$$$$')
+                # logging.info(temp_file_list)
+            # logging.info('$$$$$$$$$')
             dir_temp = []
             if dirs:
                 for d in dirs:
                     d_t = [d, int(os.path.getmtime(root + '/' + d))]
-                    # print('d_t',d_t)
+                    # logging.info('d_t',d_t)
                     dir_temp.append(d_t)
                 dirs_key = ('media_server:' + root.replace(web_server_dir, '').replace('/', ':') + ':dirs').replace(
                     '::', ':')
-                # print('dirs key', directory, dirs_key)
+                # logging.info('dirs key', directory, dirs_key)
                 r.set(dirs_key, json.dumps(dir_temp))
 
 
@@ -163,12 +170,12 @@ class FileEventHandler(FileSystemEventHandler):
     def on_moved(self, event):
         if os.path.isdir(event.src_path):
             # 删除被删除的文件的keys
-            # print('删除被删除的文件的目录', event.src_path )
+            # logging.info('删除被删除的文件的目录', event.src_path )
             self.update(event.src_path, 'del')
 
         '''
     def on_any_event(self, event):
-        print('on_any_event', event.src_path)
+        logging.info('on_any_event', event.src_path)
         self.update()
         
 
@@ -198,13 +205,13 @@ class FileEventHandler(FileSystemEventHandler):
                     temp_dir = event.src_path
                     time.sleep(1)
                     if temp_dir:
-                        print('目录改动', temp_dir)
+                        logging.info('目录改动', temp_dir)
                         self.update(temp_dir)
 
 
 if __name__ == "__main__":
     if not r.get('is_init'):
-        print('未初始化，开始全盘扫描')
+        logging.info('未初始化，开始全盘扫描')
         # 创建初始目录
         try:
             for item in dirs:
@@ -220,7 +227,7 @@ if __name__ == "__main__":
     event_handler = FileEventHandler()
     observer.schedule(event_handler, web_server_dir, recursive=True)
     observer.start()
-    print('observer started at ', web_server_dir, datetime.datetime.now())
+    logging.info('observer started at ', web_server_dir, datetime.datetime.now())
     try:
         while True:
             time.sleep(60)
