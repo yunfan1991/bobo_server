@@ -16,7 +16,7 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo -v /Volumes/video:/media -v 
 /data/config替换成一个本地目录，用来存放数据库文件
 
 #### (2) 群晖&威联通安装Docker
-##### 群晖可手动安装Docker
+##### 群晖在套件中心搜索docker，如未搜索到可手动安装Docker
 群晖docker安装包地址
 https://usdl.synology.com/download/Package/spk/Docker/
 
