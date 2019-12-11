@@ -40,7 +40,7 @@ https://www.bilibili.com/video/av77407158
 
 docker run -d -p 8567:8567 -p 8568:8568 --name bobo -v E:\video:/media -v E:\video\data:/data yunfan1976/bobo_server
 
-##### 4.4 安装windows下的文件变化监控软件（假设媒体文件目录为E:\video）
+##### 4.4 安装windows下的文件变化监控软件（假设媒体文件目录为E:\video，请于资源管理器地址栏查看）
 
 4.4.1 中国用户 
 
