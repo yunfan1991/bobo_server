@@ -6,7 +6,7 @@ bobo 是一个私人mp4媒体服务器，适合组织管理下载的mp4文件，
 
 ### 二、第一次运行
 
-#### (1) BOBO安装命令
+#### (1) 快速开始
 
 BOBO运行于Docker之上，如果您有家庭NAS或是Windows/Linux/MacOS电脑，请先安装Docker再运行本软件: 
 
@@ -44,13 +44,11 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo -v E:\video:/media -v E:\vid
 
 
 #### (5) linux下的安装，以ubuntu/debian为例
-4.1 安装docker，sudo apt install docker.io
+5.1 安装docker，sudo apt install docker.io
 
-4.2 运行bobo安装命令，例
+5.2 运行bobo安装命令，例
 
 docker run -d -p 8567:8567 -p 8568:8568 --name bobo -v /home/video:/media -v /home/video/data:/data yunfan1976/bobo_server
-
-
 
 ### 三、本地视频目录凡例： 
 
@@ -152,9 +150,9 @@ docker run -d -p 8567: 8567 -p 8568: 8568 --name bobo -v E: \ video: / media -v 
 
 
 #### (5) Linux installation, using ubuntu / debian as an example
-4.1 Install docker, sudo apt install docker.io
+5.1 Install docker, sudo apt install docker.io
 
-4.2 Run bobo installation command, for example
+5.2 Run bobo installation command, for example
 
 docker run -d -p 8567: 8567 -p 8568: 8568 --name bobo -v / home / video: / media -v / home / video / data: / data yunfan1976 / bobo_server
 
@@ -190,7 +188,7 @@ Restart docker restart bobo
 
 Remove docker rm bobo
 
-### V. Browser Operations
+### Fifth. Browser Operations
 
 After successfully running, open the browser,
 
@@ -203,11 +201,11 @@ Default PIN CODE 9999, with full viewing rights
 Learn PIN CODE 1234, you can only watch the study directory
 
 
-### Six, format conversion
+### Sixth, format conversion
 #### Note that bobo will convert all video formats that are not supported by web pages to mp4
 ##### If you do not need to convert, place an empty noconvert.txt file in the root folder of the media folder
 
 
-### 七 、 Subtitle support
+### Seventh 、 Subtitle support
 
 bobo currently only supports .srt subtitles, please set the subtitle format to file name.srt or file name.en.srt (English subtitles) or file name.zh.srt (Chinese subtitles)
