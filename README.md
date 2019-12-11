@@ -36,11 +36,17 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo -v E:\video:/media -v E:\vid
 
 ##### 4.4 安装windows下的文件变化监控软件
 
-4.4.1 中国用户 pip install docker-windows-volume-watcher -i https://mirrors.aliyun.com/pypi/simple
+4.4.1 中国用户 
 
-4.4.2 海外用户 pip install docker-windows-volume-watcher 
+pip install docker-windows-volume-watcher -i https://mirrors.aliyun.com/pypi/simple
 
-4.4.3 在windows命令行下运行 docker-volume-watcher bobo E:\video --debounce 0.1
+4.4.2 海外用户 
+
+pip install docker-windows-volume-watcher 
+
+4.4.3 在windows命令行下运行 
+
+docker-volume-watcher bobo E:\video --debounce 0.1
 
 
 #### (5) linux下的安装，以ubuntu/debian为例
@@ -124,11 +130,13 @@ Where / Volumes / video is replaced with the local video directory
 #### (2) Synology & QNAP installed BOBO
 ##### Synology can manually install Docker
 Synology docker installation package address
+
 https://usdl.synology.com/download/Package/spk/Docker/
 
 #### (3) Synology & QNAP installed BOBO
 Synology NAS install BOBO_SERVER video tutorial
 Station B
+
 https://www.bilibili.com/video/av77407158
 
 #### (4) Installation under windows
@@ -142,11 +150,17 @@ docker run -d -p 8567: 8567 -p 8568: 8568 --name bobo -v E: \ video: / media -v 
 
 ##### 4.4 Install file change monitoring software under windows
 
-4.4.1 Chinese users pip install docker-windows-volume-watcher -i https://mirrors.aliyun.com/pypi/simple
+4.4.1 Chinese users 
 
-4.4.2 Overseas users pip install docker-windows-volume-watcher
+pip install docker-windows-volume-watcher -i https://mirrors.aliyun.com/pypi/simple
 
-4.4.3 Run docker-volume-watcher bobo E: \ video --debounce 0.1 under windows command line
+4.4.2 Overseas users 
+
+pip install docker-windows-volume-watcher
+
+4.4.3 Run 
+
+docker-volume-watcher bobo E:\video --debounce 0.1 under windows command line
 
 
 #### (5) Linux installation, using ubuntu / debian as an example
@@ -155,7 +169,6 @@ docker run -d -p 8567: 8567 -p 8568: 8568 --name bobo -v E: \ video: / media -v 
 5.2 Run bobo installation command, for example
 
 docker run -d -p 8567: 8567 -p 8568: 8568 --name bobo -v / home / video: / media -v / home / video / data: / data yunfan1976 / bobo_server
-
 
 
 ### Third, the local video directory examples:
