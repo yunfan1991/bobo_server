@@ -15,15 +15,19 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo -v /Volumes/video:/media -v 
 其中 /Volumes/video 替换为本地视频目录
 /data/config替换成一个本地目录，用来存放数据库文件
 
-#### (2) 群晖&威联通安装BOBO
+#### (2) 群晖&威联通安装Docker
 ##### 群晖可手动安装Docker
 群晖docker安装包地址
 https://usdl.synology.com/download/Package/spk/Docker/
+
+威联通同理
 
 #### (3) 群晖&威联通安装BOBO
 群晖NAS安装BOBO_SERVER视频教程
 B站
 https://www.bilibili.com/video/av77407158
+
+威联通同理
 
 #### (4) windows下的安装
 4.1 安装python3,请于 https://python.org 下载最新python for windows安装包并安装
@@ -40,7 +44,7 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo -v E:\video:/media -v E:\vid
 
 pip install docker-windows-volume-watcher -i https://mirrors.aliyun.com/pypi/simple
 
-4.4.2 海外用户 
+4.4.2 其他用户 
 
 pip install docker-windows-volume-watcher 
 
@@ -50,7 +54,9 @@ docker-volume-watcher bobo E:\video --debounce 0.1
 
 
 #### (5) linux下的安装，以ubuntu/debian为例
-5.1 安装docker，sudo apt install docker.io
+5.1 安装docker
+
+sudo apt install docker.io
 
 5.2 运行bobo安装命令，例
 
