@@ -20,12 +20,14 @@ docker run -d -p 8567:8567 -p 8568:8568 --name bobo -v /Volumes/video:/media -v 
 群晖docker安装包地址
 https://usdl.synology.com/download/Package/spk/Docker/
 
-威联通同理
+威联通请安装container
 
 #### (3) 群晖&威联通安装BOBO
 群晖NAS安装BOBO_SERVER视频教程
 B站
 https://www.bilibili.com/video/av77407158
+
+在群晖docker镜像管理中搜索 bobo_server 下载安装，本地绑定 /media /config 两个目录,8567/8568两个端口即可
 
 威联通同理
 
