@@ -24,7 +24,7 @@ https://usdl.synology.com/download/Package/spk/Docker/
 
 #### (3) 群晖&威联通安装BOBO
 
-在群晖&威联通docker/container镜像管理中搜索 bobo_server 下载安装，本地绑定 /media /config 两个目录,8567/8568两个端口即可
+在群晖&威联通docker/container镜像管理中搜索 bobo_server 下载安装，本地绑定 /media /data 两个目录,8567/8568两个端口即可
 
 群晖NAS安装BOBO_SERVER视频教程
 B站
